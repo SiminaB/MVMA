@@ -83,11 +83,7 @@ Load the necessary libraries, source the file with the R functions:
 
 \hlkwd{source}\hlstd{(}\hlstr{"functions.R"}\hlstd{)}
 \end{alltt}
-
-
-{\ttfamily\noindent\color{warningcolor}{\#\# Warning in file(filename, "{}r"{}, encoding = encoding): cannot open file 'functions.R': No such file or directory}}
-
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in file(filename, "{}r"{}, encoding = encoding): cannot open the connection}}\end{kframe}
+\end{kframe}
 \end{knitrout}
 
 Will use the same theme throughout, so just declare this variable:
@@ -546,7 +542,14 @@ Separate out what is needed for Panel d):
 \end{alltt}
 
 
-{\ttfamily\noindent\bfseries\color{errorcolor}{\#\# Error in eval(expr, envir, enclos): could not find function "{}multiplot"{}}}\end{kframe}
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: grid}}\end{kframe}
+
+{\centering \includegraphics[width=\maxwidth]{figures/Figure_2_panels_abcd-1} 
+
+}
+
+
+
 \end{knitrout}
 
 \end{document}
