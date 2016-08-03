@@ -1,0 +1,278 @@
+\documentclass{article}
+\usepackage{alltt}
+\usepackage{amsmath}
+\usepackage[sc]{mathpazo}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{verbose,tmargin=2.5cm,bmargin=2.5cm,lmargin=2.5cm,rmargin=2.5cm}
+\setcounter{secnumdepth}{2}
+\setcounter{tocdepth}{2}
+\usepackage{url}
+\usepackage[unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=true,bookmarksopen=true,bookmarksopenlevel=2,
+ breaklinks=false,pdfborder={0 0 1},backref=false,colorlinks=false]
+ {hyperref}
+\hypersetup{
+ pdfstartview={XYZ null null 1}}
+
+\title{Code for Figure 2} 
+
+\usepackage{breakurl}
+\begin{document}
+\maketitle
+
+<<setup, include=FALSE, cache=FALSE>>=
+# this is equivalent to \SweaveOpts{...}
+opts_chunk$set(fig.path='figures/', fig.align='center', fig.show='hold')
+options(replace.assign=TRUE,width=60)
+@
+
+\section{Create datasets}
+
+Load the necessary libraries, source the file with the R functions:
+<<libsEtc, include=TRUE>>=
+library(ggplot2)
+library(Matrix)
+
+source("functions.R")
+@
+
+Will use the same theme throughout, so just declare this variable:
+<<>>=
+themeUsed <- 
+  theme_bw(base_size = 20) +
+  theme(axis.line = element_line(colour = "black"),
+        plot.title = element_text(size = 15, hjust=0.5),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        panel.background = element_blank(),
+        legend.key = element_blank(),
+        legend.text.align = 0,
+        legend.position = c(0.15,0.2),
+        legend.background = element_rect(fill="transparent"),
+        axis.line.x = element_line(color="black", size = 0.5), ##this is to show axes - bug in this version of ggplot2
+        axis.line.y = element_line(color="black", size = 0.5)) 
+@
+
+\section{AR(1) correlation matrices}
+
+Autoregressive case... for both within-study and between-study matrices...
+
+<<loopEff_AR1, include=TRUE>>=
+##number of studies
+I <- 20
+
+##save results in data frame
+##het is sigma^2/S^2
+bigMat <- expand.grid(r = 1/2,
+                      p = 2:20,
+                      rhoBS=0.5,
+                      het = c(0, 1/5, 1, 5),
+                      RelEff = NA)
+for(rr in 1:nrow(bigMat))
+{
+    r <- bigMat[rr, 1]
+    p <- bigMat[rr, 2]
+    rhoBS <- bigMat[rr, 3]
+    het <- bigMat[rr, 4]
+
+    ##index over the studies
+    i <- 1:I
+    ##within-study correlations
+    rho.iW <- (i-1)/I
+    ##get the *total* variance matrices (within-study PLUS between-study)
+    Si <- 
+      lapply(i, 
+             function(i, p, I, het, rhoBS){ARMAcor(phi=1, 
+                                                   rho=(i-1)/I, 
+                                                   n=p) +
+                 het * ARMAcor(phi=1, 
+                               rho=rhoBS, 
+                               n=p) },
+             p, I, het, rhoBS)
+
+    ##calculate the variances
+    VarMVMA <- VarUVMA2 <-
+      matrix(0, p, p)
+    
+    for(i in 1:I)
+    {
+      VarMVMA <- VarMVMA + solve(Si[[i]])
+      VarUVMA2 <- VarUVMA2 + Si[[i]]
+    }
+    VarMVMA <- solve(VarMVMA)
+    VarUVMA <- VarUVMA2/I^2
+    
+    bigMat$RelEff[rr] <- VarMVMA[1,1]/VarUVMA[1,1]
+}
+
+##make het a factor (for ggplot)
+bigMat$het <- as.factor(bigMat$het)
+
+levels(bigMat$het)
+@
+
+\begin{figure}[h]
+<<>>=
+panelA <- ggplot(bigMat,
+                 aes(x=p, y=RelEff))+
+  geom_line(aes(color=het, shape=het)) +
+  geom_point(size=3.0, aes(color=het, shape=het)) +
+  themeUsed+
+  scale_y_continuous(name = expression(paste(RelEff^T)),
+                     limits=c(min(bigMat$RelEff)*0.8, max(bigMat$RelEff))) +
+  scale_color_discrete(name = "",
+                       labels = 
+                         c(expression(paste(sigma^2, "/", S^2, "=",
+                                            0)),
+                           expression(paste(sigma^2, "/", S^2, "=",
+                                            1/5)),
+                           ##expression(paste(sigma^2, "/", S^2, "=",
+                           ##                 1/2)),
+                           expression(paste(sigma^2, "/", S^2, "=",
+                                            1)),
+                           ##expression(paste(sigma^2, "/", S^2, "=",
+                           ##                 2)),
+                           expression(paste(sigma^2, "/", S^2, "=",
+                                            5)))) +
+  scale_shape_discrete(name = "",
+                       labels = 
+                         c(expression(paste(sigma^2, "/", S^2, "=",
+                                            0)),
+                           expression(paste(sigma^2, "/", S^2, "=",
+                                            1/5)),
+                           ##expression(paste(sigma^2, "/", S^2, "=",
+                           ##                1/2)),
+                           expression(paste(sigma^2, "/", S^2, "=",
+                                            1)),
+                           ##expression(paste(sigma^2, "/", S^2, "=",
+                           ##                 2)),
+                           expression(paste(sigma^2, "/", S^2, "=",
+                                            5)))) +                       
+  labs(title=expression(atop("(a): AR(1)", paste("Random effects: I = 20, ",
+                                          S[i]^2, " = ", S^2, ", ",
+                                          rho[i], " = ", (i-1)/I, ", ",
+                                          ##"\n",
+                                          rho^BS, " = ", 0.5))))
+
+@
+\end{figure}
+
+\section{Block diagonal correlation matrices}
+
+Block diagonal case... for both within-study and between-study matrices...
+
+<<loopEff_bd, include=TRUE>>=
+##number of studies
+I <- 20
+
+##save results in data frame
+##het is sigma^2/S^2
+bigMat <- expand.grid(r = 1/2,
+                      p = 2:20,
+                      rhoBS=0.5,
+                      het = c(0, 1/5, 1, 5),
+                      RelEff = NA)
+for(rr in 1:nrow(bigMat))
+{
+    r <- bigMat[rr, 1]
+    p <- bigMat[rr, 2]
+    rhoBS <- bigMat[rr, 3]
+    het <- bigMat[rr, 4]
+
+    nrBlocks <- round(p/5)
+    
+    ##have one "incomplete block" if p is not divisible by 5
+    if(p %% 5 != 0)
+    {
+      nrBlocks <- nrBlocks + 1
+    }
+    
+    ##index over the studies
+    i <- 1:I
+
+    ##get all the within-study variance matrices
+    Si <- 
+      lapply(i, 
+             function(i, p, I, nrBlocks, het, rhoBS){S <- blockDiag((i-1)/I, sizeBlock=5, nrBlocks=nrBlocks) +
+               het * blockDiag(rhoBS, sizeBlock=5, nrBlocks=nrBlocks);
+             S[1:p, 1:p]},
+             p, I, nrBlocks, het, rhoBS)
+
+    ##calculate the variances
+    VarMVMA <- VarUVMA2 <-
+      matrix(0, p, p)
+
+    for(i in 1:I)
+    {
+      VarMVMA <- VarMVMA + solve(Si[[i]])
+      VarUVMA2 <- VarUVMA2 + Si[[i]]
+    }
+    VarMVMA <- solve(VarMVMA)
+    VarUVMA <- VarUVMA2/I^2
+    
+    bigMat$RelEff[rr] <- VarMVMA[1,1]/VarUVMA[1,1]
+}
+
+##make het a factor (for ggplot)
+bigMat$het <- as.factor(bigMat$het)
+
+levels(bigMat$het)
+@
+
+\begin{figure}[h]
+<<>>=
+panelB <- ggplot(bigMat,
+                 aes(x=p, y=RelEff))+
+  geom_line(aes(color=het, shape=het)) +
+  geom_point(size=3.0, aes(color=het, shape=het)) +
+  themeUsed+
+  scale_y_continuous(name = expression(paste(RelEff^T)),
+                     limits=c(min(bigMat$RelEff)*0.8, max(bigMat$RelEff))) +
+  scale_color_discrete(name = "",
+                       labels = 
+                         c(expression(paste(sigma^2, "/", S^2, "=",
+                                            0)),
+                           expression(paste(sigma^2, "/", S^2, "=",
+                                            1/5)),
+                           ##expression(paste(sigma^2, "/", S^2, "=",
+                           ##                 1/2)),
+                           expression(paste(sigma^2, "/", S^2, "=",
+                                            1)),
+                           ##expression(paste(sigma^2, "/", S^2, "=",
+                           ##                 2)),
+                           expression(paste(sigma^2, "/", S^2, "=",
+                                            5)))) +
+  scale_shape_discrete(name = "",
+                       labels = 
+                         c(expression(paste(sigma^2, "/", S^2, "=",
+                                            0)),
+                           expression(paste(sigma^2, "/", S^2, "=",
+                                            1/5)),
+                           ##expression(paste(sigma^2, "/", S^2, "=",
+                           ##                1/2)),
+                           expression(paste(sigma^2, "/", S^2, "=",
+                                            1)),
+                           ##expression(paste(sigma^2, "/", S^2, "=",
+                           ##                 2)),
+                           expression(paste(sigma^2, "/", S^2, "=",
+                                            5)))) +                       
+  labs(title=expression(atop("(b): Block diagonal (block size=5)", 
+                             paste("Random effects: I = 20, ",
+                                          S[i]^2, " = ", S^2, ", ",
+                                          rho[i], " = ", (i-1)/I, ", ",
+                                          ##"\n",
+                                          rho^BS, " = ", 0.5))))
+
+@
+\end{figure}
+
+\section{Put both panels together}
+
+<<Figure_S8_panels_ab, fig.width=12, fig.height=6, dpi=800>>=
+multiplot(panelA, panelB, cols=2)
+@
+
+
+\end{document}
