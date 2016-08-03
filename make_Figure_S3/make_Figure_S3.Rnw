@@ -1,0 +1,312 @@
+\documentclass{article}
+\usepackage{alltt}
+\usepackage{amsmath}
+\usepackage[sc]{mathpazo}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{verbose,tmargin=2.5cm,bmargin=2.5cm,lmargin=2.5cm,rmargin=2.5cm}
+\setcounter{secnumdepth}{2}
+\setcounter{tocdepth}{2}
+\usepackage{url}
+\usepackage[unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=true,bookmarksopen=true,bookmarksopenlevel=2,
+ breaklinks=false,pdfborder={0 0 1},backref=false,colorlinks=false]
+ {hyperref}
+\hypersetup{
+ pdfstartview={XYZ null null 1}}
+ 
+\title{Code for Supplementary Figure 3} 
+ 
+\usepackage{breakurl}
+\begin{document}
+\maketitle
+%\SweaveOpts{concordance=TRUE}
+
+<<setup, include=FALSE, cache=FALSE>>=
+# this is equivalent to \SweaveOpts{...}
+opts_chunk$set(fig.path='figures/', fig.align='center', fig.show='hold')##, dev='postscript')
+options(replace.assign=TRUE,width=60)
+@
+
+\section{Get the combined datasets for all the scenarios}
+
+Load the necessary libraries:
+<<loabLibs, include=TRUE>>=
+library(ggplot2)
+
+source("functions.R")
+@
+
+Will use the same theme throughout, so just declare this variable:
+<<>>=
+themeUsed <- theme_bw(base_size = 20) +
+  theme(axis.line = element_line(colour = "black"),
+        plot.title = element_text(size = 15, hjust=0.5),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        panel.background = element_blank(),
+        legend.background = element_rect(fill="transparent"),
+        legend.key = element_blank(),
+        legend.text.align = 0,
+        legend.position = c(0.15,0.28),
+        axis.line.x = element_line(color="black", size = 0.5), ##this is to show axes - bug in this version of ggplot2
+        axis.line.y = element_line(color="black", size = 0.5)) 
+@
+
+\section{Get combined dataset for panel a)}
+
+Load the files representing the summary for each scenario and save the results in a single dataframe, \textttt{VarsAll}:
+<<combCombA, include=TRUE>>=
+allFiles <- list.files("../make_Figure_2/simResultsComb")
+##remove all the files with "Suppl" in title
+allFiles <- allFiles[-grep("Suppl", allFiles)]
+
+##save the three Vars for the different combinations
+VarsAll <- expand.grid(I = c(5, 10, 15, 20),
+                       p = 2:10,
+                       corrBtw = c(0, 0.5),
+                       varBtw = c(0, 1))
+
+##only keep combinations of corrBtw=0 & varBtw=0, corrBtw=0.5 & varBtw=1
+VarsAll <- VarsAll[(VarsAll$corrBtw == 0 & VarsAll$varBtw == 0) |
+                   (VarsAll$corrBtw == 0.5 & VarsAll$varBtw == 1) ,]
+
+VarsAll$known <- VarsAll$unknown <- VarsAll$univKnown <- VarsAll$univ <- NA
+
+for(file in 1:length(allFiles))
+{
+    load(paste("../make_Figure_2/simResultsComb", 
+               allFiles[file], sep="/"))
+
+    rowNr <- gsub("combine_cost_of_estimation_", "", allFiles[file])
+    rowNr <- gsub(".RData", "", rowNr)
+    rowNr <- as.numeric(rowNr)
+
+    VarsAll[rowNr, colnames(VarsAll)] <- Vars[rowNr, colnames(VarsAll)]
+}
+VarsAll$Ratio <- VarsAll$known/VarsAll$unknown
+VarsAll$RelEff <- VarsAll$unknown/VarsAll$univ
+VarsAll$RelEffT <- VarsAll$known/VarsAll$univKnown
+range(VarsAll$Ratio)
+
+VarsAll$I <- as.factor(paste("I=", VarsAll$I, sep=""))
+VarsAll$I <- relevel(VarsAll$I, ref="I=5")
+@
+
+Separate out what is needed for Panel a:
+<<sepPanelA, include=TRUE>>=
+Vars.a <- VarsAll[VarsAll$corrBtw == 0 &
+  VarsAll$varBtw == 0,]
+@
+
+\section{Create plot for panel a}
+
+Panel a):
+<<Figure_2_panel_a, fig.width=6, fig.height=5, dpi=800>>=
+panelA <- ggplot(Vars.a, aes(x=p, y=Ratio))+
+  geom_point(size=3.0, aes(color=I, shape=I))+
+  geom_line(aes(color=I, shape=I))+
+  themeUsed+
+  ylab(expression(paste(Var, "(", mu[1]^MT, ")", "/",
+                        Var, "(", mu[1]^M, ")"))) +
+  ylim(min(Vars.a$Ratio)*0.9, 1) +
+  labs(color="", shape="",
+       title=expression(atop("(a)", paste("Random effects: ",
+                                          S[i]^2,  phantom() %~~% phantom() , 1, ", ",
+                                          rho[i], phantom() %~~% phantom(), (i-1)/I, ", ",
+                                          ##"\n",
+                                          Sigma, " = ", 0))))
+
+@
+
+\section{Get combined dataset for panels b)-d)}
+
+Load the files representing the summary for each scenario and save the results in a single dataframe, \textttt{VarsAll}:
+<<combComb, include=TRUE>>=
+allFiles <- list.files("../make_Figure_2/simResultsComb")
+##keep only files with "Suppl" in title
+allFiles <- allFiles[grep("Suppl", allFiles)]
+
+##save the three Vars for the different combinations
+VarsAll <- expand.grid(I = 20, 
+                       p = 2:10,
+                       corrBtw = c(0, 0.5),
+                       varBtw = c(1/5, 1, 5))
+
+VarsAll$known <- VarsAll$unknown <- VarsAll$univKnown <- VarsAll$univ <- NA
+
+for(file in 1:length(allFiles))
+{
+    load(paste("../make_Figure_2/simResultsComb", allFiles[file], sep="/"))
+
+    rowNr <- gsub("combine_cost_of_estimation_Suppl_", "", allFiles[file])
+    rowNr <- gsub(".RData", "", rowNr)
+    rowNr <- as.numeric(rowNr)
+
+    VarsAll[rowNr, colnames(VarsAll)] <- Vars[rowNr, colnames(VarsAll)]
+}
+VarsAll$Ratio <- VarsAll$known/VarsAll$unknown
+VarsAll$RelEff <- VarsAll$unknown/VarsAll$univ
+VarsAll$RelEffT <- VarsAll$known/VarsAll$univKnown
+range(VarsAll$Ratio)
+@
+
+Separate out what is needed for Panels b) - d):
+<<sepPanels, include=TRUE>>=
+Vars.c <- VarsAll[VarsAll$corrBtw == 0,]
+Vars.b <- VarsAll[VarsAll$corrBtw == 0.5,]
+
+###################################
+
+##for panel d), have both RelEff and RelEffT
+##probably easier to just create another object
+RelEff.d <- 
+  rbind(cbind(as.matrix(Vars.c[,c("I", "p", "corrBtw", "varBtw", "RelEff"),]),"RelEff"),
+        cbind(as.matrix(Vars.c[,c("I", "p", "corrBtw", "varBtw", "RelEffT"),]),"RelEffT"))
+colnames(RelEff.d)[6] <- "Estimate" 
+RelEff.d <- as.data.frame(RelEff.d)
+sapply(RelEff.d, class)
+
+RelEff.d$p <- as.numeric(as.character(RelEff.d$p))
+RelEff.d$corrBtw <- as.numeric(as.character(RelEff.d$corrBtw))
+RelEff.d$varBtw <- as.numeric(as.character(RelEff.d$varBtw))
+RelEff.d$RelEff <- as.numeric(as.character(RelEff.d$RelEff))
+
+@
+
+\section{Create plots for panels b)-d)}
+
+Panel b): 
+<<Figure_S3_panel_b, fig.width=6, fig.height=5, dpi=800>>=
+panelB <- ggplot(Vars.b, aes(x=p, y=Ratio))+
+  geom_point(size=3.0, aes(color=as.factor(varBtw), 
+                           shape=as.factor(varBtw)))+
+  geom_line(aes(color=as.factor(varBtw), 
+                shape=as.factor(varBtw)))+
+  themeUsed+
+  ylab(expression(paste(Var, "(", mu[1]^MT, ")", "/",
+                        Var, "(", mu[1]^M, ")"))) +
+  ylim(min(Vars.b$Ratio)*0.95, 1) +
+  scale_color_discrete(name = "",
+                       labels = 
+                         c(expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
+                                            1/5)),
+                           expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
+                                            1)),
+                           expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
+                                            5)))) +
+  scale_shape_discrete(name = "",
+                       labels = 
+                         c(expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
+                                            1/5)),
+                           expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
+                                            1)),
+                           expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
+                                            5)))) +     
+  labs(color="", shape="",
+       title=expression(atop("(b)", paste("Random effects: ",
+                                          S[i]^2,  phantom() %~~% phantom() , 1, ", ",
+                                          rho[i], phantom() %~~% phantom(), (i-1)/I, ", ",
+                                          rho^BS, " = ", 0.5, ", ",
+                                          ##"\n",
+                                          I, " = ", 20))))
+@
+
+Panel c):
+<<Figure_S3_panel_c, fig.width=6, fig.height=5, dpi=800>>=
+panelC <- ggplot(Vars.c, aes(x=p, y=Ratio))+
+  geom_point(size=3.0, aes(color=as.factor(varBtw), 
+                           shape=as.factor(varBtw)))+
+  geom_line(aes(color=as.factor(varBtw), 
+                shape=as.factor(varBtw)))+
+  themeUsed+
+  ylab(expression(paste(Var, "(", mu[1]^MT, ")", "/",
+                        Var, "(", mu[1]^M, ")"))) +
+  ylim(min(Vars.c$Ratio)*0.9, 1) +
+  scale_color_discrete(name = "",
+                       labels = 
+                         c(expression(paste(sigma^2, "=",
+                                            1/5)),
+                           expression(paste(sigma^2, "=",
+                                            1)),
+                           expression(paste(sigma^2, "=",
+                                            5)))) +
+  scale_shape_discrete(name = "",
+                       labels = 
+                         c(expression(paste(sigma^2, "=",
+                                            1/5)),
+                           expression(paste(sigma^2, "=",
+                                            1)),
+                           expression(paste(sigma^2, "=",
+                                            5)))) +     
+  labs(color="", shape="",
+       title=expression(atop("(c)", paste("Random effects: ",
+                                          S[i]^2,  phantom() %~~% phantom() , 1, ", ",
+                                          rho[i], phantom() %~~% phantom(), (i-1)/I, ", ",
+                                          rho^BS, " = ", 0, ", ",
+                                          ##"\n",
+                                          I, " = ", 20))))
+@
+
+Panel d):
+<<Figure_S3_panel_d, fig.width=6, fig.height=5, dpi=800>>=
+panelD <- ggplot(RelEff.d, aes(x=p, y=RelEff))+
+  geom_point(size=3.0, aes(color=as.factor(varBtw), shape=as.factor(varBtw)))+
+  geom_line(aes(color=as.factor(varBtw), shape=as.factor(varBtw), linetype=Estimate))+
+  themeUsed+
+  ylab(expression(RelEff)) +
+  ylim(min(RelEff.d$RelEff)*0.95, 1) +
+  scale_color_discrete(name = "",
+                       labels = 
+                         c(expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
+                                            1/5)),
+                           expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
+                                            1)),
+                           expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),                                            5)))) +
+  scale_shape_discrete(name = "",
+                       labels = 
+                         c(expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
+                                            1/5)),
+                           expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
+                                            1)),
+                           expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
+                                            5)))) +     
+  labs(color="", shape="",
+       title=expression(atop("(d)", paste("Random effects: ",
+                                          S[i]^2,  phantom() %~~% phantom() , 1, ", ",
+                                          rho[i], phantom() %~~% phantom(), (i-1)/I, ", ",
+                                          rho^BS, " = ", 0, ", ",
+                                          ##"\n",
+                                          I, " = ", 20)))) +
+  scale_linetype_discrete(name = "",
+                          labels = 
+                            c(expression(paste(RelEff)),
+                              expression(paste(RelEff^T)))) +
+  scale_color_discrete(name = "",
+                       labels = 
+                         c(expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
+                                            1/5)),
+                           expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
+                                            1)),
+                           expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
+                                            5)))) +
+  scale_shape_discrete(name = "",
+                       labels = 
+                         c(expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
+                                            1/5)),
+                           expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
+                                            1)),
+                           expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
+                                            5)))) 
+@
+
+
+\section{Put all panels together}
+
+<<Figure_S3_panels_abcd, fig.width=12, fig.height=12, dpi=800>>=
+multiplot(panelA, panelC, panelB, panelD, cols=2)
+@
+
+
+\end{document}
