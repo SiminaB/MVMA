@@ -1,0 +1,187 @@
+\documentclass{article}
+\usepackage{alltt}
+\usepackage{amsmath}
+\usepackage[sc]{mathpazo}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{verbose,tmargin=2.5cm,bmargin=2.5cm,lmargin=2.5cm,rmargin=2.5cm}
+\setcounter{secnumdepth}{2}
+\setcounter{tocdepth}{2}
+\usepackage{url}
+\usepackage[unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=true,bookmarksopen=true,bookmarksopenlevel=2,
+ breaklinks=false,pdfborder={0 0 1},backref=false,colorlinks=false]
+ {hyperref}
+\hypersetup{
+ pdfstartview={XYZ null null 1}}
+ 
+\title{Code for Supplementary Figure 2}
+ 
+\usepackage{breakurl}
+\begin{document}
+\maketitle
+%\SweaveOpts{concordance=TRUE}
+
+<<setup, include=FALSE, cache=FALSE>>=
+# this is equivalent to \SweaveOpts{...}
+opts_chunk$set(fig.path='figures/', fig.align='center', fig.show='hold')
+options(replace.assign=TRUE,width=60)
+@
+
+\section{Create datasets}
+
+Load the necessary libraries, source the file with the R functions:
+<<loabLibs, include=TRUE>>=
+library(ggplot2)
+
+source("functions.R")
+@
+
+These results are for the $I=2, p=2$ case, so the parameters we vary are:
+$r_1, r_2, \rho_{12,1}, \rho_{12,2}$. We save the relative efficiencies for both coefficients.
+For Panel a), we take $\rho_{12,1} = 0, r_1=r_2=r$:
+<<loop.a, include=TRUE>>=
+bigMat.a <- expand.grid(r=c(0.1, 0.5, 0.9),
+                        rho121=0, rho122=(-19:19)/20)
+bigMat.a <- cbind(bigMat.a, RelEff1=NA, RelEff2=NA)
+bigMat.a <- as.matrix(bigMat.a)
+for(i in 1:nrow(bigMat.a))
+{
+  rho121 <- bigMat.a[i,"rho121"]
+  rho122 <- bigMat.a[i,"rho122"]
+  r <- bigMat.a[i, "r"]
+    
+  bigMat.a[i,c(4,5)] <- effCalc2(rho112=rho121, rho212=rho122, r1=r, r2=r)
+}  
+##turn it back into data frame (need it as data frame for ggplot)
+bigMat.a <- as.data.frame(bigMat.a)
+##check that relative efficiencies are identical for the two coefficients
+identical(bigMat.a$RelEff1, bigMat.a$RelEff2)
+##rename RelEff1 as RelEff
+names(bigMat.a)[names(bigMat.a) == "RelEff1"] <- "RelEff"
+##make r into a factor (needed for ggplot)
+bigMat.a$r <- paste("r=", bigMat.a$r, sep="")##as.factor(bigMat.a$r)
+@
+
+For Panel b), we take $r_1 = 0.5, \rho_{12,1}=0.5$:
+<<loop.b, include=TRUE>>=
+bigMat.b <- expand.grid(r1=1/2, r2=c(0.1, 0.5, 0.9),
+                        rho121=0.5, rho122=(-19:19)/20)
+bigMat.b <- cbind(bigMat.b, RelEff1=0, RelEff2=0)
+bigMat.b <- as.matrix(bigMat.b)
+for(i in 1:nrow(bigMat.b))
+{
+  rho121 <- bigMat.b[i,"rho121"]
+  rho122 <- bigMat.b[i,"rho122"]
+  r1 <- bigMat.b[i, "r1"]
+  r2 <- bigMat.b[i, "r2"]
+  
+  bigMat.b[i,c(5,6)] <- effCalc2(rho112=rho121, rho212=rho122, r1=r1, r2=r2) 
+}
+##turn it back into data frame (need it as data frame for ggplot)
+bigMat.b <- as.data.frame(bigMat.b)
+identical(bigMat.b$RelEff1, bigMat.b$RelEff2)
+##rename RelEff1 as RelEff
+names(bigMat.b)[names(bigMat.b) == "RelEff1"] <- "RelEff"
+##make r2 into a factor (needed for ggplot)
+bigMat.b$r2 <- as.factor(bigMat.b$r2)
+@
+
+\section{Create plots}
+
+Panel a):
+<<Figure_S2_panel_a>>=
+panelA <- ggplot(bigMat.a,
+                 aes(x=rho122, y=RelEff)) +
+  geom_line(size=1.3, aes(linetype=r, color=r)) +
+  theme_bw(base_size = 20)+
+  xlab(expression(paste(rho[2]))) +
+  scale_color_discrete(name = "",
+                       labels = 
+                         c(expression(paste(r[2], "=",
+                                            0.1)),
+                           expression(paste(r[2], "=",
+                                            0.5)),
+                           expression(paste(r[2], "=",
+                                            0.9)))) +
+  scale_linetype_discrete(name = "",
+                          labels = 
+                            c(expression(paste(r[2], "=",
+                                               0.1)),
+                              expression(paste(r[2], "=",
+                                               0.5)),
+                              expression(paste(r[2], "=",
+                                               0.9)))) +
+  theme(axis.line = element_line(colour = "black"),
+        plot.title = element_text(size = 16, hjust = 0.5),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        panel.background = element_blank(),
+        legend.key = element_blank(),
+        axis.line.x = element_line(color="black", size = 0.5), ##this is to show axes - bug in this version of ggplot2
+        axis.line.y = element_line(color="black", size = 0.5)) +
+  labs(title=expression(atop("(a)", paste("Fixed effects: I = 2, ", 
+                                          rho[1], " = ", 0, ", ",
+                                          r[1], " = ", r[2]))))
+
+@
+
+Panel b):
+<<Figure_S2_panel_b>>=
+panelB <- ggplot(bigMat.b,
+                 aes(x=rho122, y=RelEff)) +
+  geom_line(size=1.3, aes(linetype=r2, color=r2)) +
+  theme_bw(base_size = 20) +
+  xlab(expression(paste(rho[2]))) +
+  scale_color_discrete(name = "",
+                       labels = 
+                         c(expression(paste(r[2], "=",
+                                            0.1)),
+                           expression(paste(r[2], "=",
+                                            0.5)),
+                           expression(paste(r[2], "=",
+                                            0.9)))) +
+  scale_linetype_discrete(name = "",
+                          labels = 
+                            c(expression(paste(r[2], "=",
+                                               0.1)),
+                              expression(paste(r[2], "=",
+                                               0.5)),
+                              expression(paste(r[2], "=",
+                                               0.9)))) +
+  theme(axis.line = element_line(colour = "black"),
+        plot.title = element_text(size = 16, hjust = 0.5),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        panel.background = element_blank(),
+        legend.key = element_blank(),
+        axis.line.x = element_line(color="black", size = 0.5), ##this is to show axes - bug in this version of ggplot2
+        axis.line.y = element_line(color="black", size = 0.5)) +
+  labs(title=expression(atop("(b)", paste("Fixed effects: I = 2, ", 
+                                          rho[1], " = ", 0.5, ", ",
+                                          r[1], " = ", 0.5))))
+
+@
+
+\section{Put both panels together}
+
+<<Figure_S2_panels_ab, fig.width=12, fig.height=5, dpi=800>>=
+multiplot(panelA, panelB, cols=2)
+@
+
+
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
