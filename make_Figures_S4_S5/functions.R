@@ -61,22 +61,6 @@ ARMAcor <- function(phi, rho, n)
   C
 }
 
-##make block diagonal matrix giving correlation, size of block, number of blocks
-blockDiag <- function(rho, sizeBlock, nrBlocks)
-{
-  block <- matrix(rho, sizeBlock, sizeBlock)
-  diag(block) <- 1
-  blockList <- list()
-  for(i in 1:nrBlocks)
-  {
-    blockList[[i]] <- block
-  }
-  Sigma <- bdiag(blockList)
-  Sigma <- as.matrix(Sigma)
-  Sigma
-}
-
-
 ##get 1-denominator of efficiency for p=2 (note it's r2 for the 1st component, r1 for the 2nd component)
 oneMinusDenomEff2 <- function(rho112, rho212, r2)
 {
@@ -165,3 +149,30 @@ invert2By2Var <- function(v)
   dInv
 }
 
+##make panels figures S4-S5
+panelFigS4S5 <- function(I, subsetSigma2, RelEffSubs) 
+{
+  ggplot(RelEffSubs[as.character(RelEffSubs$I) == as.character(I) &
+                      as.character(RelEffSubs$Sigma2) == subsetSigma2,], 
+         aes(x=p, y=RelEff))+
+    geom_point(size=3.0, aes(color=randVar, shape=Estimate))+
+    theme_bw(base_size = 20)+
+    theme(axis.line = element_line(colour = "black"),
+          plot.title = element_text(size = 15, hjust=0.5),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.border = element_blank(),
+          panel.background = element_blank(),
+          legend.key = element_blank(),
+          legend.text.align = 0,
+          ##scale_x_continuous(breaks=c(5,10,15,20)) +
+          legend.position = c(0.15,0.2),
+          axis.line.x = element_line(color="black", size = 0.5), ##this is to show axes - bug in this version of ggplot2
+          axis.line.y = element_line(color="black", size = 0.5)) +
+    guides(color=FALSE) + ##remove legend corresponding to color aesthetic
+    ##scale_color_discrete(name = "Random scenario") +
+    scale_shape_discrete(name ="",
+                         labels = c(expression(paste(RelEff)), 
+                                    expression(paste(RelEff^T)))) +
+    ylim(0.73, 1) 
+}

@@ -165,29 +165,3 @@ invert2By2Var <- function(v)
   dInv
 }
 
-##make panels for new figures (post SIM rejection)
-panelFigPostSim <- function(I, subsetSigma2, RelEffSubs) 
-{
-  ggplot(RelEffSubs[as.character(RelEffSubs$I) == as.character(I) &
-                      as.character(RelEffSubs$Sigma2) == subsetSigma2,], 
-         aes(x=p, y=RelEff))+
-    geom_point(size=3.0, aes(color=randVar, shape=Estimate))+
-    theme_bw(base_size = 20)+
-    theme(axis.line = element_line(colour = "black"),
-          plot.title = element_text(size = 15, hjust=0.5),
-          panel.grid.major = element_blank(),
-          panel.grid.minor = element_blank(),
-          panel.border = element_blank(),
-          panel.background = element_blank(),
-          legend.key = element_blank(),
-          legend.text.align = 0,
-          ##scale_x_continuous(breaks=c(5,10,15,20)) +
-          legend.position = c(0.15,0.2)) +
-    guides(color=FALSE) + ##remove legend corresponding to color aesthetic
-    ##scale_color_discrete(name = "Random scenario") +
-    scale_shape_discrete(name ="",
-                         labels = c(expression(paste(RelEff)), 
-                                    expression(paste(RelEff^T)),
-                                    expression(paste(AsymptRelEff^T)))) +
-    ylim(0.75, 1) 
-}
