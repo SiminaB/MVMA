@@ -53,97 +53,7 @@ themeUsed <- theme_bw(base_size = 20) +
         axis.line.y = element_line(color="black", size = 0.5)) 
 @
   
-\section{Dataset for panel a)}
-
-These results are for the $I=20, p\ge 2$ exchangeable case with equal within-study  and between-study variances, with $S_i^2 \equiv S^2$ and $\rho_i = \frac{\rho(i-1)}{I}$ (within study). The parameters we vary are 
-\frac{\sigma^2}{S^2}$ and $p$, as we take $\rho^{BS} = 0.5$ 
-We save the relative efficiencies for only one of coefficients, as they are all equal.
-<<loopEff, include=TRUE>>=
-##number of studies
-I <- 20
-
-##save results in data frame
-##het is sigma^2/S^2
-bigMat <- expand.grid(p = 2:20,
-                      rhoBS=0.5,
-                      het = c(0, 1/5, 1, 5),
-                      RelEff = NA)
-for(rr in 1:nrow(bigMat))
-{
-    p <- bigMat[rr, 1]
-    rhoBS <- bigMat[rr, 2]
-    het <- bigMat[rr, 3]
-
-    ##index over the studies
-    i <- 1:I
-    ##within-study correlations
-    rho.iW <- (i-1)/I
-    ##overall correlations    
-    rho.i <- (rho.iW + rhoBS*het)/(1+het)
-
-    ##calculate the two sums
-    ##Sum1 is over 1/(1-rho_i)
-    ##Sum2 is over 1/(1+(p-1)*rho_i)
-    Sum1 <- sum(1/(1-rho.i))
-    Sum2 <- sum(1/(1+(p-1)*rho.i))
-    
-    bigMat$RelEff[rr] <- I/p * (Sum1 + (p-1)*Sum2)/(Sum1*Sum2)
-}
-
-
-##make het a factor (for ggplot)
-bigMat$het <- as.factor(bigMat$het)
-@
-
-\section{Create plot for panel a)}
-
-\begin{figure}[h]
-<<Figure_2_panel_a>>=
-panelA <- ggplot(bigMat,
-                 aes(x=p, y=RelEff))+
-  geom_line(aes(color=het, shape=het)) +
-  geom_point(size=3.0, aes(color=het, shape=het)) +
-  themeUsed +
-  scale_y_continuous(name = expression(paste(RelEff^T)),
-                     limits=c(min(bigMat$RelEff)*0.8, 1)) +
-  scale_color_discrete(name = "",
-                       labels = 
-                         c(expression(paste(sigma^2, "/", S^2, "=",
-                                            0)),
-                           expression(paste(sigma^2, "/", S^2, "=",
-                                            1/5)),
-                           ##expression(paste(sigma^2, "/", S^2, "=",
-                           ##                 1/2)),
-                           expression(paste(sigma^2, "/", S^2, "=",
-                                            1)),
-                           ##expression(paste(sigma^2, "/", S^2, "=",
-                           ##                 2)),
-                           expression(paste(sigma^2, "/", S^2, "=",
-                                            5)))) +
-  scale_shape_discrete(name = "",
-                       labels = 
-                         c(expression(paste(sigma^2, "/", S^2, "=",
-                                            0)),
-                           expression(paste(sigma^2, "/", S^2, "=",
-                                            1/5)),
-                           ##expression(paste(sigma^2, "/", S^2, "=",
-                           ##                1/2)),
-                           expression(paste(sigma^2, "/", S^2, "=",
-                                            1)),
-                           ##expression(paste(sigma^2, "/", S^2, "=",
-                           ##                 2)),
-                           expression(paste(sigma^2, "/", S^2, "=",
-                                            5)))) +                       
-  labs(title=expression(atop("(a)", paste("Random effects: I = 20, ",
-                                          S[i]^2, " = ", S^2, ", ",
-                                          rho[i], " = ", (i-1)/I, ", ",
-                                          ##"\n",
-                                          rho^BS, " = ", 0.5))))
-
-@
-\end{figure}
-
-\section{Get the combined dataset for panel b)}
+\section{Get the combined dataset for panel a)}
 
 Load the files representing the summary for each scenario with 0 heterogeneity and save the results in a single dataframe, \textttt{Vars0}:
 <<combComb0, include=TRUE>>=
@@ -213,7 +123,7 @@ VarsAll$RelEffT <- VarsAll$known/VarsAll$univKnown
 range(VarsAll$Ratio)
 @
 
-Separate out what is needed for Panel b):
+Separate out what is needed for Panel a):
 <<sepPanels, include=TRUE>>=
 Vars <- VarsAll[VarsAll$corrBtw == 0.5,]
 
@@ -233,13 +143,13 @@ RelEff.b$varBtw <- as.numeric(as.character(RelEff.b$varBtw))
 RelEff.b$RelEff <- as.numeric(as.character(RelEff.b$RelEff))
 @
 
-<<Figure_2_panel_b, fig.width=6, fig.height=5, dpi=800>>=
-panelB <- ggplot(RelEff.b, aes(x=p, y=RelEff))+
+<<Figure_2_panel_a, fig.width=6, fig.height=5, dpi=800>>=
+panelA <- ggplot(RelEff.b, aes(x=p, y=RelEff))+
   geom_point(size=3.0, aes(color=as.factor(varBtw), shape=as.factor(varBtw)))+
   geom_line(aes(linetype=Estimate,color=as.factor(varBtw), shape=as.factor(varBtw)))+
   themeUsed +
   ylab(expression(RelEff)) +
-  ylim(limits=c(min(bigMat$RelEff)*0.8, 1)) +
+  ylim(limits=c(0.45, 1)) +
   scale_color_discrete(name = "",
                        labels = 
                          c(expression(paste(sigma^2, "/", S^2, "=",
@@ -261,80 +171,20 @@ panelB <- ggplot(RelEff.b, aes(x=p, y=RelEff))+
                            expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
                                             5)))) +     
   labs(color="", shape="",
-       title=expression(atop("(b)",paste("Random effects: ",
+       title=expression(atop("(a)",paste("Random effects: ",
                                         S[i]^2,  phantom() %~~% phantom() , 1, ", ",
                                         rho[i], phantom() %~~% phantom(), (i-1)/I, ", ",
                                         rho^BS, " = ", 0.5, ", ",
                                         ##"\n",
                                         I, " = ", 20)))) +
-  scale_linetype_discrete(name = "",
-                          labels = 
-                            c(expression(paste(RelEff)),
-                              expression(paste(RelEff^T))))
+  scale_linetype_manual(name = "",
+                        labels = 
+                          c(expression(paste(RelEff)),
+                            expression(paste(RelEff^T))),
+                        values=2:1)
 @
 
-\section{Dataset for panel c)}
-
-These results are for the $p\ge 2$ exchangeable case with equal within-study  and between-study variances, with $S_i^2 \equiv S^2, \rho_i = \frac{\rho(i-1)}{I}, \Sigma=0$ (within study). The parameter we vary is the number of studies, $I.$
-We save the relative efficiencies for only one of coefficients, as they are all equal.
-<<loopEffC, include=TRUE>>=
-##save results in data frame
-##het is sigma^2/S^2
-bigMat <- expand.grid(p = 2:20,
-                      I=c(5,10,15,20),
-                      RelEff = NA)
-for(rr in 1:nrow(bigMat))
-{
-    p <- bigMat[rr, 1]
-    I <- bigMat[rr, 2]
-    
-    het <- 0
-
-    ##index over the studies
-    i <- 1:I
-    ##within-study correlations
-    rho.iW <- (i-1)/I
-    ##overall correlations    
-    rho.i <- (rho.iW + rhoBS*het)/(1+het)
-
-    ##calculate the two sums
-    ##Sum1 is over 1/(1-rho_i)
-    ##Sum2 is over 1/(1+(p-1)*rho_i)
-    Sum1 <- sum(1/(1-rho.i))
-    Sum2 <- sum(1/(1+(p-1)*rho.i))
-    
-    bigMat$RelEff[rr] <- I/p * (Sum1 + (p-1)*Sum2)/(Sum1*Sum2)
-}
-
-##make these changes for ggplot
-bigMat$I <- as.factor(paste("I=", bigMat$I, sep=""))
-bigMat$I <- relevel(bigMat$I, ref="I=5")
-
-@
-
-\section{Create plot for panel c)}
-
-\begin{figure}[h]
-<<Figure_2_panel_c>>=
-panelC <- ggplot(bigMat,
-                 aes(x=p, y=RelEff))+
-  geom_line(aes(color=I, shape=I)) +
-  geom_point(size=3.0, aes(color=I, shape=I)) +
-  themeUsed +
-  scale_y_continuous(name = expression(paste(RelEff^T)),
-                     limits=c(min(bigMat$RelEff)*0.85, 1)) +
-  scale_color_discrete(name="")+
-  scale_shape_discrete(name="")+
-  labs(title=expression(atop("(c)", paste("Random effects: ",
-                                          S[i]^2, " = ", S^2, ", ",
-                                          rho[i], " = ", (i-1)/I, ", ",
-                                          ##"\n",
-                                          Sigma, " = ", 0))))
-
-@
-\end{figure}
-
-\section{Get the combined dataset for panel d)}
+\section{Get the combined dataset for panel b)}
 
 Load the files representing the summary for each scenario and save the results in a single dataframe, \textttt{VarsAll}:
 <<combCombD, include=TRUE>>=
@@ -374,7 +224,7 @@ VarsAll$I <- as.factor(paste("I=", VarsAll$I, sep=""))
 VarsAll$I <- relevel(VarsAll$I, ref="I=5")
 @
 
-Separate out what is needed for Panel d):
+Separate out what is needed for Panel b):
 <<sepPanelD, include=TRUE>>=
 Vars.b <- VarsAll[VarsAll$corrBtw == 0 &
   VarsAll$varBtw == 0,]
@@ -396,32 +246,35 @@ RelEff.d$I <- relevel(RelEff.d$I, ref="I=5")
 
 @
 
-\section{Create plot for panel d)}
+\section{Create plot for panel b)}
 
-<<Figure_2_panel_d, fig.width=6, fig.height=5, dpi=800>>=
-panelD <- ggplot(RelEff.d, aes(x=p, y=RelEff))+
+<<Figure_2_panel_b, fig.width=6, fig.height=5, dpi=800>>=
+panelB <- ggplot(RelEff.d, aes(x=p, y=RelEff))+
   geom_point(size=3.0, aes(color=I, shape=I))+
   geom_line(aes(color=I, shape=I, linetype=Estimate))+
   themeUsed+
   ylab(expression(RelEff)) +
-  ylim(min(bigMat$RelEff)*0.85, 1) +
+  ylim(limits=c(0.45, 1)) +
   labs(color="", shape="", 
-       title=expression(atop("(d)", paste("Random effects: ",
+       title=expression(atop("(b)", paste("Random effects: ",
                                           S[i]^2,  phantom() %~~% phantom() , 1, ", ",
                                           rho[i], phantom() %~~% phantom(), (i-1)/I, ", ",
                                           ##"\n",
                                           Sigma, " = ", 0)))) +
-  scale_linetype_discrete(name = "",
-                          labels = 
-                            c(expression(paste(RelEff)),
-                              expression(paste(RelEff^T))))
+  scale_color_manual(values=rev(gg_color_hue(4)), name="")+
+  scale_shape_manual(values=c(3,15,17,16),name="")+
+  scale_linetype_manual(name = "",
+                        labels = 
+                          c(expression(paste(RelEff)),
+                            expression(paste(RelEff^T))),
+                        values=2:1)
 @
 
 
-\section{Put all four panels together}
+\section{Put both panels together}
 
-<<Figure_2_panels_abcd, fig.width=12, fig.height=12, dpi=800>>=
-multiplot(panelA, panelC, panelB, panelD, cols=2)
+<<Figure_2_panels_ab, fig.width=12, fig.height=6, dpi=800>>=
+multiplot(panelA, panelB, cols=2)
 @
 
 \end{document}

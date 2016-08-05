@@ -282,8 +282,8 @@ We save the relative efficiencies for only one of coefficients, as they are all 
 \hlstd{I} \hlkwb{<-} \hlnum{20}
 
 \hlcom{##save results in data frame}
-\hlstd{bigMat} \hlkwb{<-} \hlkwd{expand.grid}\hlstd{(}\hlkwc{rho} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{0.25}\hlstd{,} \hlnum{0.5}\hlstd{,} \hlnum{0.75}\hlstd{),}
-                      \hlkwc{p} \hlstd{=} \hlnum{2}\hlopt{:}\hlnum{1000}\hlstd{,}
+\hlstd{bigMat} \hlkwb{<-} \hlkwd{expand.grid}\hlstd{(}\hlkwc{rho} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{0}\hlstd{,} \hlnum{0.25}\hlstd{,} \hlnum{0.5}\hlstd{,} \hlnum{0.75}\hlstd{,} \hlnum{1}\hlstd{),}
+                      \hlkwc{p} \hlstd{=} \hlnum{2}\hlopt{:}\hlnum{20}\hlstd{,}
                       \hlkwc{RelEff} \hlstd{=} \hlnum{NA}\hlstd{)}
 
 \hlkwa{for}\hlstd{(n} \hlkwa{in} \hlnum{1}\hlopt{:}\hlkwd{nrow}\hlstd{(bigMat))}
@@ -310,61 +310,6 @@ We save the relative efficiencies for only one of coefficients, as they are all 
 \end{kframe}
 \end{knitrout}
 
-Compare minimum values with known asymptotic limits:
-
-\begin{knitrout}
-\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
-\begin{alltt}
-\hlkwd{min}\hlstd{(bigMat}\hlopt{$}\hlstd{RelEff[bigMat}\hlopt{$}\hlstd{rho}\hlopt{==}\hlstr{"rho=0.25"}\hlstd{])}
-\end{alltt}
-\begin{verbatim}
-## [1] 0.8901406
-\end{verbatim}
-\begin{alltt}
-\hlkwd{min}\hlstd{(bigMat}\hlopt{$}\hlstd{RelEff[bigMat}\hlopt{$}\hlstd{rho}\hlopt{==}\hlstr{"rho=0.5"}\hlstd{])}
-\end{alltt}
-\begin{verbatim}
-## [1] 0.7512425
-\end{verbatim}
-\begin{alltt}
-\hlkwd{min}\hlstd{(bigMat}\hlopt{$}\hlstd{RelEff[bigMat}\hlopt{$}\hlstd{rho}\hlopt{==}\hlstr{"rho=0.75"}\hlstd{])}
-\end{alltt}
-\begin{verbatim}
-## [1] 0.5808737
-\end{verbatim}
-\begin{alltt}
-\hlstd{asympLimit} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{rho}\hlstd{,} \hlkwc{I}\hlstd{)}
-\hlstd{\{}
-  \hlstd{i} \hlkwb{<-} \hlnum{1}\hlopt{:}\hlstd{I}
-  \hlstd{rho.i} \hlkwb{<-} \hlstd{rho}\hlopt{*}\hlstd{(i}\hlopt{-}\hlnum{1}\hlstd{)}\hlopt{/}\hlstd{I}
-
-  \hlstd{I}\hlopt{*}\hlstd{(}\hlnum{1}\hlopt{/}\hlkwd{sum}\hlstd{(}\hlnum{1}\hlopt{/}\hlstd{rho.i)}\hlopt{+}\hlnum{1}\hlopt{/}\hlkwd{sum}\hlstd{(}\hlnum{1}\hlopt{/}\hlstd{(}\hlnum{1}\hlopt{-}\hlstd{rho.i)))}
-\hlstd{\}}
-
-\hlkwd{asympLimit}\hlstd{(}\hlnum{0.25}\hlstd{, I)}
-\end{alltt}
-\begin{verbatim}
-## [1] 0.875323
-\end{verbatim}
-\begin{alltt}
-\hlkwd{asympLimit}\hlstd{(}\hlnum{0.5}\hlstd{, I)}
-\end{alltt}
-\begin{verbatim}
-## [1] 0.7344264
-\end{verbatim}
-\begin{alltt}
-\hlkwd{asympLimit}\hlstd{(}\hlnum{0.75}\hlstd{, I)}
-\end{alltt}
-\begin{verbatim}
-## [1] 0.5631485
-\end{verbatim}
-\begin{alltt}
-\hlcom{##only plot the subset with p between 2 and 20}
-\hlstd{bigMat} \hlkwb{<-} \hlstd{bigMat[bigMat}\hlopt{$}\hlstd{p} \hlopt{<=} \hlnum{20}\hlstd{,]}
-\end{alltt}
-\end{kframe}
-\end{knitrout}
-
 \section{Create plot for panel c)}
 
 \begin{knitrout}
@@ -384,7 +329,9 @@ Compare minimum values with known asymptotic limits:
                            \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(rho,} \hlstr{"="}\hlstd{,}
                                             \hlnum{0.5}\hlstd{)),}
                            \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(rho,} \hlstr{"="}\hlstd{,}
-                                            \hlnum{0.75}\hlstd{))))} \hlopt{+}
+                                            \hlnum{0.75}\hlstd{)),}
+                           \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(rho,} \hlstr{"="}\hlstd{,}
+                                            \hlnum{1}\hlstd{))))} \hlopt{+}
   \hlkwd{scale_shape_discrete}\hlstd{(}\hlkwc{name} \hlstd{=} \hlstr{""}\hlstd{,}
                        \hlkwc{labels} \hlstd{=}
                          \hlkwd{c}\hlstd{(}\hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(rho,} \hlstr{"="}\hlstd{,}
@@ -394,7 +341,9 @@ Compare minimum values with known asymptotic limits:
                            \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(rho,} \hlstr{"="}\hlstd{,}
                                             \hlnum{0.5}\hlstd{)),}
                            \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(rho,} \hlstr{"="}\hlstd{,}
-                                            \hlnum{0.75}\hlstd{))))} \hlopt{+}
+                                            \hlnum{0.75}\hlstd{)),}
+                           \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(rho,} \hlstr{"="}\hlstd{,}
+                                            \hlnum{1}\hlstd{))))} \hlopt{+}
   \hlkwd{theme_bw}\hlstd{(}\hlkwc{base_size} \hlstd{=} \hlnum{20}\hlstd{)} \hlopt{+}
   \hlkwd{theme}\hlstd{(}\hlkwc{axis.line} \hlstd{=} \hlkwd{element_line}\hlstd{(}\hlkwc{colour} \hlstd{=} \hlstr{"black"}\hlstd{),}
         \hlkwc{plot.title} \hlstd{=} \hlkwd{element_text}\hlstd{(}\hlkwc{size} \hlstd{=} \hlnum{16}\hlstd{,} \hlkwc{hjust} \hlstd{=} \hlnum{0.2}\hlstd{),}
@@ -415,18 +364,99 @@ Compare minimum values with known asymptotic limits:
 \end{kframe}
 \end{knitrout}
 
-\section{Put all three panels together}
+\section{Create dataset for panel d)}
+
+These results are for the $p\ge 2$ exchangeable case with equal within-study  and between-study variances, with $S_i^2 \equiv S^2, \rho_i = \frac{\rho(i-1)}{I}, \Sigma=0$ (within study). The parameter we vary is the number of studies, $I.$
+We save the relative efficiencies for only one of coefficients, as they are all equal.
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{##save results in data frame}
+\hlcom{##het is sigma^2/S^2}
+\hlstd{bigMat} \hlkwb{<-} \hlkwd{expand.grid}\hlstd{(}\hlkwc{p} \hlstd{=} \hlnum{2}\hlopt{:}\hlnum{20}\hlstd{,}
+                      \hlkwc{I}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{5}\hlstd{,}\hlnum{10}\hlstd{,}\hlnum{15}\hlstd{,}\hlnum{20}\hlstd{),}
+                      \hlkwc{RelEff} \hlstd{=} \hlnum{NA}\hlstd{)}
+\hlkwa{for}\hlstd{(rr} \hlkwa{in} \hlnum{1}\hlopt{:}\hlkwd{nrow}\hlstd{(bigMat))}
+\hlstd{\{}
+    \hlstd{p} \hlkwb{<-} \hlstd{bigMat[rr,} \hlnum{1}\hlstd{]}
+    \hlstd{I} \hlkwb{<-} \hlstd{bigMat[rr,} \hlnum{2}\hlstd{]}
+
+    \hlstd{het} \hlkwb{<-} \hlnum{0}
+
+    \hlcom{##index over the studies}
+    \hlstd{i} \hlkwb{<-} \hlnum{1}\hlopt{:}\hlstd{I}
+    \hlcom{##within-study correlations}
+    \hlstd{rho.iW} \hlkwb{<-} \hlstd{(i}\hlopt{-}\hlnum{1}\hlstd{)}\hlopt{/}\hlstd{I}
+    \hlcom{##overall correlations    }
+    \hlstd{rho.i} \hlkwb{<-} \hlstd{rho.iW}
+
+    \hlcom{##calculate the two sums}
+    \hlcom{##Sum1 is over 1/(1-rho_i)}
+    \hlcom{##Sum2 is over 1/(1+(p-1)*rho_i)}
+    \hlstd{Sum1} \hlkwb{<-} \hlkwd{sum}\hlstd{(}\hlnum{1}\hlopt{/}\hlstd{(}\hlnum{1}\hlopt{-}\hlstd{rho.i))}
+    \hlstd{Sum2} \hlkwb{<-} \hlkwd{sum}\hlstd{(}\hlnum{1}\hlopt{/}\hlstd{(}\hlnum{1}\hlopt{+}\hlstd{(p}\hlopt{-}\hlnum{1}\hlstd{)}\hlopt{*}\hlstd{rho.i))}
+
+    \hlstd{bigMat}\hlopt{$}\hlstd{RelEff[rr]} \hlkwb{<-} \hlstd{I}\hlopt{/}\hlstd{p} \hlopt{*} \hlstd{(Sum1} \hlopt{+} \hlstd{(p}\hlopt{-}\hlnum{1}\hlstd{)}\hlopt{*}\hlstd{Sum2)}\hlopt{/}\hlstd{(Sum1}\hlopt{*}\hlstd{Sum2)}
+\hlstd{\}}
+
+\hlcom{##make these changes for ggplot}
+\hlstd{bigMat}\hlopt{$}\hlstd{I} \hlkwb{<-} \hlkwd{as.factor}\hlstd{(}\hlkwd{paste}\hlstd{(}\hlstr{"I="}\hlstd{, bigMat}\hlopt{$}\hlstd{I,} \hlkwc{sep}\hlstd{=}\hlstr{""}\hlstd{))}
+\hlstd{bigMat}\hlopt{$}\hlstd{I} \hlkwb{<-} \hlkwd{relevel}\hlstd{(bigMat}\hlopt{$}\hlstd{I,} \hlkwc{ref}\hlstd{=}\hlstr{"I=5"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\section{Create plot for panel d)}
+
+\begin{figure}[h]
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{panelD} \hlkwb{<-} \hlkwd{ggplot}\hlstd{(bigMat,}
+                 \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=p,} \hlkwc{y}\hlstd{=RelEff))}\hlopt{+}
+  \hlkwd{geom_line}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{color}\hlstd{=I,} \hlkwc{shape}\hlstd{=I))} \hlopt{+}
+  \hlkwd{geom_point}\hlstd{(}\hlkwc{size}\hlstd{=}\hlnum{3.0}\hlstd{,} \hlkwd{aes}\hlstd{(}\hlkwc{color}\hlstd{=I,} \hlkwc{shape}\hlstd{=I))} \hlopt{+}
+  \hlkwd{ylim}\hlstd{(}\hlkwd{c}\hlstd{(}\hlnum{0.45}\hlstd{,}\hlnum{1}\hlstd{))} \hlopt{+}
+  \hlkwd{theme_bw}\hlstd{(}\hlkwc{base_size} \hlstd{=} \hlnum{20}\hlstd{)} \hlopt{+}
+  \hlkwd{theme}\hlstd{(}\hlkwc{axis.line} \hlstd{=} \hlkwd{element_line}\hlstd{(}\hlkwc{colour} \hlstd{=} \hlstr{"black"}\hlstd{),}
+        \hlkwc{plot.title} \hlstd{=} \hlkwd{element_text}\hlstd{(}\hlkwc{size} \hlstd{=} \hlnum{15}\hlstd{,} \hlkwc{hjust}\hlstd{=}\hlnum{0.5}\hlstd{),}
+        \hlkwc{panel.grid.major} \hlstd{=} \hlkwd{element_blank}\hlstd{(),}
+        \hlkwc{panel.grid.minor} \hlstd{=} \hlkwd{element_blank}\hlstd{(),}
+        \hlkwc{panel.border} \hlstd{=} \hlkwd{element_blank}\hlstd{(),}
+        \hlkwc{panel.background} \hlstd{=} \hlkwd{element_blank}\hlstd{(),}
+        \hlkwc{legend.background} \hlstd{=} \hlkwd{element_rect}\hlstd{(}\hlkwc{fill}\hlstd{=}\hlstr{"transparent"}\hlstd{),}
+        \hlkwc{legend.key} \hlstd{=} \hlkwd{element_blank}\hlstd{(),}
+        \hlkwc{legend.text.align} \hlstd{=} \hlnum{0}\hlstd{,}
+        \hlcom{##legend.position = c(0.15,0.28),}
+        \hlkwc{axis.line.x} \hlstd{=} \hlkwd{element_line}\hlstd{(}\hlkwc{color}\hlstd{=}\hlstr{"black"}\hlstd{,} \hlkwc{size} \hlstd{=} \hlnum{0.5}\hlstd{),} \hlcom{##this is to show axes - bug in this version of ggplot2}
+        \hlkwc{axis.line.y} \hlstd{=} \hlkwd{element_line}\hlstd{(}\hlkwc{color}\hlstd{=}\hlstr{"black"}\hlstd{,} \hlkwc{size} \hlstd{=} \hlnum{0.5}\hlstd{))} \hlopt{+}
+  \hlkwd{scale_y_continuous}\hlstd{(}\hlkwc{name} \hlstd{=} \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(RelEff)),}
+                     \hlkwc{limits}\hlstd{=}\hlkwd{c}\hlstd{(}\hlkwd{min}\hlstd{(bigMat}\hlopt{$}\hlstd{RelEff)}\hlopt{*}\hlnum{0.85}\hlstd{,} \hlnum{1}\hlstd{))} \hlopt{+}
+  \hlkwd{scale_color_manual}\hlstd{(}\hlkwc{values}\hlstd{=}\hlkwd{rev}\hlstd{(}\hlkwd{gg_color_hue}\hlstd{(}\hlnum{4}\hlstd{)),} \hlkwc{name}\hlstd{=}\hlstr{""}\hlstd{)}\hlopt{+}
+  \hlkwd{scale_shape_manual}\hlstd{(}\hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{3}\hlstd{,}\hlnum{15}\hlstd{,}\hlnum{17}\hlstd{,}\hlnum{16}\hlstd{),}\hlkwc{name}\hlstd{=}\hlstr{""}\hlstd{)}\hlopt{+}
+  \hlkwd{labs}\hlstd{(}\hlkwc{title}\hlstd{=}\hlkwd{expression}\hlstd{(}\hlkwd{atop}\hlstd{(}\hlstr{"(d)"}\hlstd{,} \hlkwd{paste}\hlstd{(}\hlstr{"Fixed effects: "}\hlstd{,}
+                                          \hlstd{S[kk,i],} \hlstr{" = "}\hlstd{,} \hlnum{1}\hlstd{,} \hlstr{", "}\hlstd{,}
+                                          \hlstd{rho[i],} \hlstr{" = "}\hlstd{, (i}\hlopt{-}\hlnum{1}\hlstd{)}\hlopt{/}\hlstd{I))))}
+\end{alltt}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Scale for 'y' is already present. Adding another scale\\\#\# for 'y', which will replace the existing scale.}}\end{kframe}
+\end{knitrout}
+\end{figure}
+
+\section{Put all four panels together}
 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlkwd{multiplot}\hlstd{(panelA, panelB, panelC,} \hlkwc{cols}\hlstd{=}\hlnum{3}\hlstd{)}
+\hlkwd{multiplot}\hlstd{(panelA, panelC,}
+          \hlstd{panelB, panelD,} \hlkwc{cols}\hlstd{=}\hlnum{2}\hlstd{)}
 \end{alltt}
 
 
 {\ttfamily\noindent\itshape\color{messagecolor}{\#\# Loading required package: grid}}\end{kframe}
 
-{\centering \includegraphics[width=\maxwidth]{figures/Figure_1_panels_abc-1} 
+{\centering \includegraphics[width=\maxwidth]{figures/Figure_1_panels_abcd-1} 
 
 }
 

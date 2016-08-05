@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2014.1.14)  2 AUG 2016 12:35
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2014.1.14)  5 AUG 2016 12:47
 entering extended mode
 **make_Figure2.tex
 (C:\Users\sboca\Documents\GitHub\MVMA\make_Figure_2\make_Figure2.tex
@@ -550,55 +550,8 @@ Overfull \hbox (149.0532pt too wide) in paragraph at lines 104--104
 to show axes - bug in this version of ggplot2[][] 
  []
 
-! Missing $ inserted.
-<inserted text> 
-                $
-l.113 \frac{\sigma^2}{S^2}
-                          $ and $p$, as we take $\rho^{BS} = 0.5$
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-! Missing $ inserted.
-<inserted text> 
-                $
-l.113 \frac{\sigma^2}{S^2}
-                          $ and $p$, as we take $\rho^{BS} = 0.5$
-I've inserted something that you may have forgotten.
-(See the <inserted text> above.)
-With luck, this will get me unwedged. But if you
-really didn't forget anything, try typing `2' now; then
-my insertion and my current dilemma will both disappear.
-
-! Missing $ inserted.
-<inserted text> 
-                $
-l.113 \frac{\sigma^2}{S^2}
-                          $ and $p$, as we take $\rho^{BS} = 0.5$
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-! Extra }, or forgotten $.
-\frac  #1#2->{\begingroup #1\endgroup \@@over #2}
-                                                 
-l.113 \frac{\sigma^2}{S^2}
-                          $ and $p$, as we take $\rho^{BS} = 0.5$
-I've deleted a group-closing symbol because it seems to be
-spurious, as in `$x}$'. But perhaps the } is legitimate and
-you forgot something else, as in `\hbox{$x}'. In such cases
-the way to recover is to insert both the forgotten and the
-deleted material, e.g., by typing `I$}'.
-
-Package color Info: Redefining color shadecolor on input line 116.
-[1
-
-{C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map}]
-Package color Info: Redefining color shadecolor on input line 160.
-
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
 ! Undefined control sequence.
-l.209 ...e results in a single dataframe, \textttt
+l.112 ...e results in a single dataframe, \textttt
                                                   {Vars0}:
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -606,10 +559,26 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-Package color Info: Redefining color shadecolor on input line 211.
+Package color Info: Redefining color shadecolor on input line 114.
+[1
+
+{C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map}]
+! Undefined control sequence.
+l.158 ...e results in a single dataframe, \textttt
+                                                  {VarsAll}:
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+Package color Info: Redefining color shadecolor on input line 160.
 [2]
+Package color Info: Redefining color shadecolor on input line 197.
+Package color Info: Redefining color shadecolor on input line 225.
+ [3]
 ! Undefined control sequence.
-l.255 ...e results in a single dataframe, \textttt
+l.271 ...e results in a single dataframe, \textttt
                                                   {VarsAll}:
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -617,89 +586,59 @@ misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
-Package color Info: Redefining color shadecolor on input line 257.
-Package color Info: Redefining color shadecolor on input line 294.
-[3]
-Package color Info: Redefining color shadecolor on input line 322.
-Package color Info: Redefining color shadecolor on input line 370.
- [4]
-Package color Info: Redefining color shadecolor on input line 411.
-
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-! Undefined control sequence.
-l.434 ...e results in a single dataframe, \textttt
-                                                  {VarsAll}:
-The control sequence at the end of the top line
-of your error message was never \def'ed. If you have
-misspelled it (e.g., `\hobx'), type `I' and the correct
-spelling (e.g., `I\hbox'). Otherwise just continue,
-and I'll forget about whatever was undefined.
-
-Package color Info: Redefining color shadecolor on input line 436.
-[5]
-Package color Info: Redefining color shadecolor on input line 482.
-
-Overfull \hbox (0.35341pt too wide) in paragraph at lines 491--491
+Package color Info: Redefining color shadecolor on input line 273.
+Package color Info: Redefining color shadecolor on input line 319.
+[4]
+Overfull \hbox (0.35341pt too wide) in paragraph at lines 328--328
 []        []\T1/cmtt/m/n/10 cbind[][]([][]as.matrix[][](Vars.b[,[][]c[][]([][]"
 I"[][],[] []"p"[][],[] []"corrBtw"[][],[] []"varBtw"[][],[] []"RelEffT"[][]),])
 ,[][]"RelEffT"[][]))[][] 
  []
 
-Package color Info: Redefining color shadecolor on input line 513.
-[6]
-Overfull \hbox (0.35341pt too wide) in paragraph at lines 524--524
+Package color Info: Redefining color shadecolor on input line 350.
+
+Overfull \hbox (0.35341pt too wide) in paragraph at lines 361--361
 []                                          []\T1/cmtt/m/n/10 rho[i],[] []phant
 om[][]()[] []%~~%[] []phantom[][](), (i[][]-[][]1[][])[][]/[][]I,[] []", "[][],
 [][] 
  []
 
-Package color Info: Redefining color shadecolor on input line 539.
-<figures/Figure_2_panels_abcd-1.pdf, id=73, 867.24pt x 867.24pt>
-File: figures/Figure_2_panels_abcd-1.pdf Graphic file (type pdf)
+Package color Info: Redefining color shadecolor on input line 379.
+<figures/Figure_2_panels_ab-1.pdf, id=44, 867.24pt x 433.62pt>
+File: figures/Figure_2_panels_ab-1.pdf Graphic file (type pdf)
 
-<use figures/Figure_2_panels_abcd-1.pdf>
-Package pdftex.def Info: figures/Figure_2_panels_abcd-1.pdf used on input line 
-547.
-(pdftex.def)             Requested size: 472.03123pt x 472.03435pt.
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 555.
- [7] [8 <C:/Users/sboca/Documents/GitHub/MVMA/make_Figure_2/figures/Figure_2_pa
-nels_abcd-1.pdf>] [9] [10]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 555.
+<use figures/Figure_2_panels_ab-1.pdf>
+Package pdftex.def Info: figures/Figure_2_panels_ab-1.pdf used on input line 38
+7.
+(pdftex.def)             Requested size: 472.03123pt x 236.01717pt.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 395.
+ [5] [6 <C:/Users/sboca/Documents/GitHub/MVMA/make_Figure_2/figures/Figure_2_pa
+nels_ab-1.pdf>]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 395.
 
 (C:\Users\sboca\Documents\GitHub\MVMA\make_Figure_2\make_Figure2.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 555.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 555.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 395.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 395.
 Package rerunfilecheck Info: File `make_Figure2.out' has not changed.
-(rerunfilecheck)             Checksum: 7E39BF77D0B526A5E2ED34081A7126B1;1762.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 555.
- )
-(\end occurred inside a group at level 1)
-
-### simple group (level 1) entered at line 113 ({)
-### bottom level 
+(rerunfilecheck)             Checksum: F0EEF201B3E3EC3043E62778F2F8E065;1021.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 395.
+ ) 
 Here is how much of TeX's memory you used:
- 10298 strings out of 493921
- 144127 string characters out of 3147282
- 254935 words of memory out of 3000000
- 13448 multiletter control sequences out of 15000+200000
- 34518 words of font info for 74 fonts, out of 3000000 for 9000
+ 10257 strings out of 493921
+ 143702 string characters out of 3147282
+ 227383 words of memory out of 3000000
+ 13429 multiletter control sequences out of 15000+200000
+ 22972 words of font info for 45 fonts, out of 3000000 for 9000
  841 hyphenation exceptions out of 8191
- 30i,6n,32p,308b,415s stack positions out of 5000i,500n,10000p,200000b,50000s
-{C:/Program Files/MiKTeX 2.9/fonts/enc/dvips/fontname/8r.enc} <
-C:\Users\sboca\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\ecit
-1000.pk> <C:\Users\sboca\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\d
-pi600\ectt1000.pk><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/c
-mr10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb
-><C:/Program Files/MiKTeX 2.9/fonts/type1/public/mathpazo/fplmr.pfb><C:/Program
- Files/MiKTeX 2.9/fonts/type1/public/mathpazo/fplmri.pfb><C:/Program Files/MiKT
-eX 2.9/fonts/type1/urw/palatino/uplb8a.pfb><C:/Program Files/MiKTeX 2.9/fonts/t
-ype1/urw/palatino/uplr8a.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/urw/palat
-ino/uplri8a.pfb>
-Output written on make_Figure2.pdf (10 pages, 150763 bytes).
+ 30i,6n,32p,308b,393s stack positions out of 5000i,500n,10000p,200000b,50000s
+ <C:\Users\sboca\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\dpi600\
+ecit1000.pk> <C:\Users\sboca\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\jknappen\
+ec\dpi600\ectt1000.pk>{C:/Program Files/MiKTeX 2.9/fonts/enc/dvips/fontname/8r.
+enc}<C:/Program Files/MiKTeX 2.9/fonts/type1/urw/palatino/uplb8a.pfb><C:/Progra
+m Files/MiKTeX 2.9/fonts/type1/urw/palatino/uplr8a.pfb>
+Output written on make_Figure2.pdf (6 pages, 98028 bytes).
 PDF statistics:
- 262 PDF objects out of 1000 (max. 8388607)
- 20 named destinations out of 1000 (max. 500000)
- 78 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 196 PDF objects out of 1000 (max. 8388607)
+ 12 named destinations out of 1000 (max. 500000)
+ 46 words of extra memory for PDF output out of 10000 (max. 10000000)
 

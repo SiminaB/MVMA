@@ -210,8 +210,8 @@ We save the relative efficiencies for only one of coefficients, as they are all 
 I <- 20
 
 ##save results in data frame
-bigMat <- expand.grid(rho = c(0, 0.25, 0.5, 0.75),
-                      p = 2:1000,
+bigMat <- expand.grid(rho = c(0, 0.25, 0.5, 0.75, 1),
+                      p = 2:20,
                       RelEff = NA)
 
 for(n in 1:nrow(bigMat))
@@ -236,29 +236,6 @@ for(n in 1:nrow(bigMat))
 bigMat$rho <- paste("rho=", bigMat$rho, sep="")
 @
 
-Compare minimum values with known asymptotic limits:
-
-<<asymptLimits, echo=TRUE>>=
-min(bigMat$RelEff[bigMat$rho=="rho=0.25"])
-min(bigMat$RelEff[bigMat$rho=="rho=0.5"])
-min(bigMat$RelEff[bigMat$rho=="rho=0.75"])
-
-asympLimit <- function(rho, I)
-{
-  i <- 1:I
-  rho.i <- rho*(i-1)/I
-  
-  I*(1/sum(1/rho.i)+1/sum(1/(1-rho.i)))
-}
-
-asympLimit(0.25, I)
-asympLimit(0.5, I)
-asympLimit(0.75, I)
-
-##only plot the subset with p between 2 and 20
-bigMat <- bigMat[bigMat$p <= 20,]
-@
-
 \section{Create plot for panel c)}
 
 <<Figure_1_panel_c, fig.width=6, fig.height=5>>=
@@ -276,7 +253,9 @@ panelC <- ggplot(bigMat,
                            expression(paste(rho, "=",
                                             0.5)),
                            expression(paste(rho, "=",
-                                            0.75)))) +
+                                            0.75)),
+                           expression(paste(rho, "=",
+                                            1)))) +
   scale_shape_discrete(name = "",
                        labels = 
                          c(expression(paste(rho, "=",
@@ -286,7 +265,9 @@ panelC <- ggplot(bigMat,
                            expression(paste(rho, "=",
                                             0.5)),
                            expression(paste(rho, "=",
-                                            0.75)))) + 
+                                            0.75)),
+                           expression(paste(rho, "=",
+                                            1)))) + 
   theme_bw(base_size = 20) +
   theme(axis.line = element_line(colour = "black"),
         plot.title = element_text(size = 16, hjust = 0.2),
@@ -306,10 +287,83 @@ panelC <- ggplot(bigMat,
 
 @
 
-\section{Put all three panels together}
+\section{Create dataset for panel d)}
 
-<<Figure_1_panels_abc, fig.width=18, fig.height=5, dpi=800>>=
-multiplot(panelA, panelB, panelC, cols=3)
+These results are for the $p\ge 2$ exchangeable case with equal within-study  and between-study variances, with $S_i^2 \equiv S^2, \rho_i = \frac{\rho(i-1)}{I}, \Sigma=0$ (within study). The parameter we vary is the number of studies, $I.$
+We save the relative efficiencies for only one of coefficients, as they are all equal.
+<<loopEffC, include=TRUE>>=
+##save results in data frame
+##het is sigma^2/S^2
+bigMat <- expand.grid(p = 2:20,
+                      I=c(5,10,15,20),
+                      RelEff = NA)
+for(rr in 1:nrow(bigMat))
+{
+    p <- bigMat[rr, 1]
+    I <- bigMat[rr, 2]
+    
+    het <- 0
+
+    ##index over the studies
+    i <- 1:I
+    ##within-study correlations
+    rho.iW <- (i-1)/I
+    ##overall correlations    
+    rho.i <- rho.iW
+
+    ##calculate the two sums
+    ##Sum1 is over 1/(1-rho_i)
+    ##Sum2 is over 1/(1+(p-1)*rho_i)
+    Sum1 <- sum(1/(1-rho.i))
+    Sum2 <- sum(1/(1+(p-1)*rho.i))
+    
+    bigMat$RelEff[rr] <- I/p * (Sum1 + (p-1)*Sum2)/(Sum1*Sum2)
+}
+
+##make these changes for ggplot
+bigMat$I <- as.factor(paste("I=", bigMat$I, sep=""))
+bigMat$I <- relevel(bigMat$I, ref="I=5")
+
+@
+
+\section{Create plot for panel d)}
+
+\begin{figure}[h]
+<<Figure_2_panel_d>>=
+panelD <- ggplot(bigMat,
+                 aes(x=p, y=RelEff))+
+  geom_line(aes(color=I, shape=I)) +
+  geom_point(size=3.0, aes(color=I, shape=I)) +
+  ylim(c(0.45,1)) +
+  theme_bw(base_size = 20) +
+  theme(axis.line = element_line(colour = "black"),
+        plot.title = element_text(size = 15, hjust=0.5),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        panel.background = element_blank(),
+        legend.background = element_rect(fill="transparent"),
+        legend.key = element_blank(),
+        legend.text.align = 0,
+        ##legend.position = c(0.15,0.28),
+        axis.line.x = element_line(color="black", size = 0.5), ##this is to show axes - bug in this version of ggplot2
+        axis.line.y = element_line(color="black", size = 0.5)) +
+  scale_y_continuous(name = expression(paste(RelEff)),
+                     limits=c(min(bigMat$RelEff)*0.85, 1)) +
+  scale_color_manual(values=rev(gg_color_hue(4)), name="")+
+  scale_shape_manual(values=c(3,15,17,16),name="")+
+  labs(title=expression(atop("(d)", paste("Fixed effects: ",
+                                          S[kk,i], " = ", 1, ", ",
+                                          rho[i], " = ", (i-1)/I))))
+
+@
+\end{figure}
+
+\section{Put all four panels together}
+
+<<Figure_1_panels_abcd, fig.width=12, fig.height=10, dpi=800>>=
+multiplot(panelA, panelC, 
+          panelB, panelD, cols=2)
 @
 
 \end{document}
