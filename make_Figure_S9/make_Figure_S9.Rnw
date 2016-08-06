@@ -142,7 +142,7 @@ RelEff.b$varBtw <- as.numeric(as.character(RelEff.b$varBtw))
 RelEff.b$RelEff <- as.numeric(as.character(RelEff.b$RelEff))
 @
 
-<<Figure_S8_panel_a, fig.width=6, fig.height=5, dpi=800>>=
+<<Figure_S9_panel_a, fig.width=6, fig.height=5, dpi=800>>=
 panelA <- ggplot(RelEff.b, aes(x=p, y=RelEff))+
   geom_point(size=3.0, aes(color=as.factor(varBtw), shape=as.factor(varBtw)))+
   geom_line(aes(linetype=Estimate,color=as.factor(varBtw), shape=as.factor(varBtw)))+
@@ -257,7 +257,7 @@ RelEff.c$I <- relevel(RelEff.c$I, ref="I=5")
 \section{Create plots}
 
 Panel b):
-<<Figure_S8_panel_b, fig.width=6, fig.height=5, dpi=800>>=
+<<Figure_S9_panel_b, fig.width=6, fig.height=5, dpi=800>>=
 panelB <- ggplot(RelEff.c, aes(x=p, y=RelEff))+
   geom_point(size=3.0, aes(color=I, shape=I))+
   geom_line(aes(color=I, shape=I, linetype=Estimate))+
@@ -281,7 +281,7 @@ panelB <- ggplot(RelEff.c, aes(x=p, y=RelEff))+
 @
 
 Panel c):
-<<Figure_S8_panel_c, fig.width=6, fig.height=5, dpi=800>>=
+<<Figure_S9_panel_c, fig.width=6, fig.height=5, dpi=800>>=
 panelC <- ggplot(RelEff.c, aes(x=p, y=MVMAcomp))+
   geom_point(size=3.0, aes(color=I, shape=I))+
   geom_line(aes(color=I, shape=I))+
@@ -301,7 +301,7 @@ panelC <- ggplot(RelEff.c, aes(x=p, y=MVMAcomp))+
 
 
 
-<<Figure_S8_panels_abcd, fig.width=12, fig.height=12, dpi=800>>=
+<<Figure_S9_panels_abcd, fig.width=12, fig.height=12, dpi=800>>=
 multiplot(panelA, panelC, panelB, cols=2)
 @
 
