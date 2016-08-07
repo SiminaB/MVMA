@@ -15,7 +15,7 @@
 \hypersetup{
  pdfstartview={XYZ null null 1}}
  
-\title{Some variations on Figure 1 b)} 
+\title{Some variations on Figures 1 b), 1 c)} 
  
 \usepackage{breakurl}
 \begin{document}
@@ -138,7 +138,7 @@ We save the relative efficiencies for only one of coefficients, as they are all 
 I <- 20
 
 ##save results in data frame
-bigMat <- expand.grid(rho = c(0, 0.25, 0.5, 0.75),
+bigMat <- expand.grid(rho = c(0, 0.25, 0.5, 0.75, 1),
                       p = 2:20,
                       RelEff = NA)
 
@@ -201,7 +201,9 @@ panelB <- ggplot(bigMat,
                            expression(paste(rho, "=",
                                             0.5)),
                            expression(paste(rho, "=",
-                                            0.75)))) +
+                                            0.75)),
+                           expression(paste(rho, "=",
+                                            1)))) +
   scale_shape_discrete(name = "",
                        labels = 
                          c(expression(paste(rho, "=",
@@ -211,7 +213,9 @@ panelB <- ggplot(bigMat,
                            expression(paste(rho, "=",
                                             0.5)),
                            expression(paste(rho, "=",
-                                            0.75)))) + 
+                                            0.75)),
+                           expression(paste(rho, "=",
+                                            1)))) + 
   themeUsed+
   labs(title=
          expression(atop("(b): AR(1)",
@@ -321,7 +325,7 @@ We save the relative efficiencies for only one of coefficients, as they are all 
 I <- 20
 
 ##save results in data frame
-bigMat <- expand.grid(rho = c(0, 0.25, 0.5, 0.75),
+bigMat <- expand.grid(rho = c(0, 0.25, 0.5, 0.75, 1),
                       p = 2:20,
                       RelEff = NA)
 
@@ -382,7 +386,9 @@ panelD <- ggplot(bigMat,
                            expression(paste(rho, "=",
                                             0.5)),
                            expression(paste(rho, "=",
-                                            0.75)))) +
+                                            0.75)),
+                           expression(paste(rho, "=",
+                                            1)))) +
   scale_shape_discrete(name = "",
                        labels = 
                          c(expression(paste(rho, "=",
@@ -392,7 +398,9 @@ panelD <- ggplot(bigMat,
                            expression(paste(rho, "=",
                                             0.5)),
                            expression(paste(rho, "=",
-                                            0.75)))) + 
+                                            0.75)),
+                           expression(paste(rho, "=",
+                                            1)))) + 
   labs(title=
          expression(atop("(d): Block diagonal (block size=5)",
                          paste("Fixed effects: I = 20, ", 
