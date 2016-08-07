@@ -94,17 +94,17 @@ VarsAll$I <- as.factor(paste("I=", VarsAll$I, sep=""))
 VarsAll$I <- relevel(VarsAll$I, ref="I=5")
 @
 
-Separate out what is needed for Panel a:
+Separate out what is needed for Panel b:
 <<sepPanelA, include=TRUE>>=
 Vars.a <- VarsAll[VarsAll$corrBtw == 0 &
   VarsAll$varBtw == 0,]
 @
 
-\section{Create plot for panel a}
+\section{Create plot for panel b}
 
-Panel a):
-<<Figure_2_panel_a, fig.width=6, fig.height=5, dpi=800>>=
-panelA <- ggplot(Vars.a, aes(x=p, y=Ratio))+
+Panel b):
+<<Figure_2_panel_b, fig.width=6, fig.height=5, dpi=800>>=
+panelB <- ggplot(Vars.a, aes(x=p, y=Ratio))+
   geom_point(size=3.0, aes(color=I, shape=I))+
   geom_line(aes(color=I, shape=I))+
   themeUsed+
@@ -112,7 +112,7 @@ panelA <- ggplot(Vars.a, aes(x=p, y=Ratio))+
                         Var, "(", mu[1]^M, ")"))) +
   ylim(min(Vars.a$Ratio)*0.9, 1) +
   labs(color="", shape="",
-       title=expression(atop("(a)", paste("Random effects: ",
+       title=expression(atop("(b)", paste("Random effects: ",
                                           S[i]^2,  phantom() %~~% phantom() , 1, ", ",
                                           rho[i], phantom() %~~% phantom(), (i-1)/I, ", ",
                                           ##"\n",
@@ -120,7 +120,7 @@ panelA <- ggplot(Vars.a, aes(x=p, y=Ratio))+
 
 @
 
-\section{Get combined dataset for panels b)-d)}
+\section{Get combined dataset for panels a),c),d)}
 
 Load the files representing the summary for each scenario and save the results in a single dataframe, \textttt{VarsAll}:
 <<combComb, include=TRUE>>=
@@ -152,7 +152,7 @@ VarsAll$RelEffT <- VarsAll$known/VarsAll$univKnown
 range(VarsAll$Ratio)
 @
 
-Separate out what is needed for Panels b) - d):
+Separate out what is needed for Panels a),c)d):
 <<sepPanels, include=TRUE>>=
 Vars.c <- VarsAll[VarsAll$corrBtw == 0,]
 Vars.b <- VarsAll[VarsAll$corrBtw == 0.5,]
@@ -175,11 +175,11 @@ RelEff.d$RelEff <- as.numeric(as.character(RelEff.d$RelEff))
 
 @
 
-\section{Create plots for panels b)-d)}
+\section{Create plots for panels a),c),d)}
 
-Panel b): 
-<<Figure_S3_panel_b, fig.width=6, fig.height=5, dpi=800>>=
-panelB <- ggplot(Vars.b, aes(x=p, y=Ratio))+
+Panel a): 
+<<Figure_S3_panel_a, fig.width=6, fig.height=5, dpi=800>>=
+panelA <- ggplot(Vars.b, aes(x=p, y=Ratio))+
   geom_point(size=3.0, aes(color=as.factor(varBtw), 
                            shape=as.factor(varBtw)))+
   geom_line(aes(color=as.factor(varBtw), 
@@ -205,7 +205,7 @@ panelB <- ggplot(Vars.b, aes(x=p, y=Ratio))+
                            expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
                                             5)))) +     
   labs(color="", shape="",
-       title=expression(atop("(b)", paste("Random effects: ",
+       title=expression(atop("(a)", paste("Random effects: ",
                                           S[i]^2,  phantom() %~~% phantom() , 1, ", ",
                                           rho[i], phantom() %~~% phantom(), (i-1)/I, ", ",
                                           rho^BS, " = ", 0.5, ", ",

@@ -156,7 +156,7 @@ Load the files representing the summary for each scenario and save the results i
 \end{kframe}
 \end{knitrout}
 
-Separate out what is needed for Panel a:
+Separate out what is needed for Panel b:
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -166,13 +166,13 @@ Separate out what is needed for Panel a:
 \end{kframe}
 \end{knitrout}
 
-\section{Create plot for panel a}
+\section{Create plot for panel b}
 
-Panel a):
+Panel b):
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{panelA} \hlkwb{<-} \hlkwd{ggplot}\hlstd{(Vars.a,} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=p,} \hlkwc{y}\hlstd{=Ratio))}\hlopt{+}
+\hlstd{panelB} \hlkwb{<-} \hlkwd{ggplot}\hlstd{(Vars.a,} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=p,} \hlkwc{y}\hlstd{=Ratio))}\hlopt{+}
   \hlkwd{geom_point}\hlstd{(}\hlkwc{size}\hlstd{=}\hlnum{3.0}\hlstd{,} \hlkwd{aes}\hlstd{(}\hlkwc{color}\hlstd{=I,} \hlkwc{shape}\hlstd{=I))}\hlopt{+}
   \hlkwd{geom_line}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{color}\hlstd{=I,} \hlkwc{shape}\hlstd{=I))}\hlopt{+}
   \hlstd{themeUsed}\hlopt{+}
@@ -180,7 +180,7 @@ Panel a):
                         \hlstd{Var,} \hlstr{"("}\hlstd{, mu[}\hlnum{1}\hlstd{]}\hlopt{^}\hlstd{M,} \hlstr{")"}\hlstd{)))} \hlopt{+}
   \hlkwd{ylim}\hlstd{(}\hlkwd{min}\hlstd{(Vars.a}\hlopt{$}\hlstd{Ratio)}\hlopt{*}\hlnum{0.9}\hlstd{,} \hlnum{1}\hlstd{)} \hlopt{+}
   \hlkwd{labs}\hlstd{(}\hlkwc{color}\hlstd{=}\hlstr{""}\hlstd{,} \hlkwc{shape}\hlstd{=}\hlstr{""}\hlstd{,}
-       \hlkwc{title}\hlstd{=}\hlkwd{expression}\hlstd{(}\hlkwd{atop}\hlstd{(}\hlstr{"(a)"}\hlstd{,} \hlkwd{paste}\hlstd{(}\hlstr{"Random effects: "}\hlstd{,}
+       \hlkwc{title}\hlstd{=}\hlkwd{expression}\hlstd{(}\hlkwd{atop}\hlstd{(}\hlstr{"(b)"}\hlstd{,} \hlkwd{paste}\hlstd{(}\hlstr{"Random effects: "}\hlstd{,}
                                           \hlstd{S[i]}\hlopt{^}\hlnum{2}\hlstd{,}  \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{() ,} \hlnum{1}\hlstd{,} \hlstr{", "}\hlstd{,}
                                           \hlstd{rho[i],} \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{(), (i}\hlopt{-}\hlnum{1}\hlstd{)}\hlopt{/}\hlstd{I,} \hlstr{", "}\hlstd{,}
                                           \hlcom{##"\textbackslash{}n",}
@@ -189,7 +189,7 @@ Panel a):
 \end{kframe}
 \end{knitrout}
 
-\section{Get combined dataset for panels b)-d)}
+\section{Get combined dataset for panels a),c),d)}
 
 Load the files representing the summary for each scenario and save the results in a single dataframe, \textttt{VarsAll}:
 \begin{knitrout}
@@ -228,7 +228,7 @@ Load the files representing the summary for each scenario and save the results i
 \end{kframe}
 \end{knitrout}
 
-Separate out what is needed for Panels b) - d):
+Separate out what is needed for Panels a),c)d):
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
@@ -259,13 +259,13 @@ Separate out what is needed for Panels b) - d):
 \end{kframe}
 \end{knitrout}
 
-\section{Create plots for panels b)-d)}
+\section{Create plots for panels a),c),d)}
 
-Panel b): 
+Panel a): 
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hlstd{panelB} \hlkwb{<-} \hlkwd{ggplot}\hlstd{(Vars.b,} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=p,} \hlkwc{y}\hlstd{=Ratio))}\hlopt{+}
+\hlstd{panelA} \hlkwb{<-} \hlkwd{ggplot}\hlstd{(Vars.b,} \hlkwd{aes}\hlstd{(}\hlkwc{x}\hlstd{=p,} \hlkwc{y}\hlstd{=Ratio))}\hlopt{+}
   \hlkwd{geom_point}\hlstd{(}\hlkwc{size}\hlstd{=}\hlnum{3.0}\hlstd{,} \hlkwd{aes}\hlstd{(}\hlkwc{color}\hlstd{=}\hlkwd{as.factor}\hlstd{(varBtw),}
                            \hlkwc{shape}\hlstd{=}\hlkwd{as.factor}\hlstd{(varBtw)))}\hlopt{+}
   \hlkwd{geom_line}\hlstd{(}\hlkwd{aes}\hlstd{(}\hlkwc{color}\hlstd{=}\hlkwd{as.factor}\hlstd{(varBtw),}
@@ -291,7 +291,7 @@ Panel b):
                            \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlstr{"/"}\hlstd{, S}\hlopt{^}\hlnum{2}\hlstd{,} \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{(),}
                                             \hlnum{5}\hlstd{))))} \hlopt{+}
   \hlkwd{labs}\hlstd{(}\hlkwc{color}\hlstd{=}\hlstr{""}\hlstd{,} \hlkwc{shape}\hlstd{=}\hlstr{""}\hlstd{,}
-       \hlkwc{title}\hlstd{=}\hlkwd{expression}\hlstd{(}\hlkwd{atop}\hlstd{(}\hlstr{"(b)"}\hlstd{,} \hlkwd{paste}\hlstd{(}\hlstr{"Random effects: "}\hlstd{,}
+       \hlkwc{title}\hlstd{=}\hlkwd{expression}\hlstd{(}\hlkwd{atop}\hlstd{(}\hlstr{"(a)"}\hlstd{,} \hlkwd{paste}\hlstd{(}\hlstr{"Random effects: "}\hlstd{,}
                                           \hlstd{S[i]}\hlopt{^}\hlnum{2}\hlstd{,}  \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{() ,} \hlnum{1}\hlstd{,} \hlstr{", "}\hlstd{,}
                                           \hlstd{rho[i],} \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{(), (i}\hlopt{-}\hlnum{1}\hlstd{)}\hlopt{/}\hlstd{I,} \hlstr{", "}\hlstd{,}
                                           \hlstd{rho}\hlopt{^}\hlstd{BS,} \hlstr{" = "}\hlstd{,} \hlnum{0.5}\hlstd{,} \hlstr{", "}\hlstd{,}
