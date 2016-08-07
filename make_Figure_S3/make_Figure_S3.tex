@@ -178,13 +178,16 @@ Panel b):
   \hlstd{themeUsed}\hlopt{+}
   \hlkwd{ylab}\hlstd{(}\hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(Var,} \hlstr{"("}\hlstd{, mu[}\hlnum{1}\hlstd{]}\hlopt{^}\hlstd{MT,} \hlstr{")"}\hlstd{,} \hlstr{"/"}\hlstd{,}
                         \hlstd{Var,} \hlstr{"("}\hlstd{, mu[}\hlnum{1}\hlstd{]}\hlopt{^}\hlstd{M,} \hlstr{")"}\hlstd{)))} \hlopt{+}
+
   \hlkwd{ylim}\hlstd{(}\hlkwd{min}\hlstd{(Vars.a}\hlopt{$}\hlstd{Ratio)}\hlopt{*}\hlnum{0.9}\hlstd{,} \hlnum{1}\hlstd{)} \hlopt{+}
   \hlkwd{labs}\hlstd{(}\hlkwc{color}\hlstd{=}\hlstr{""}\hlstd{,} \hlkwc{shape}\hlstd{=}\hlstr{""}\hlstd{,}
        \hlkwc{title}\hlstd{=}\hlkwd{expression}\hlstd{(}\hlkwd{atop}\hlstd{(}\hlstr{"(b)"}\hlstd{,} \hlkwd{paste}\hlstd{(}\hlstr{"Random effects: "}\hlstd{,}
                                           \hlstd{S[i]}\hlopt{^}\hlnum{2}\hlstd{,}  \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{() ,} \hlnum{1}\hlstd{,} \hlstr{", "}\hlstd{,}
                                           \hlstd{rho[i],} \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{(), (i}\hlopt{-}\hlnum{1}\hlstd{)}\hlopt{/}\hlstd{I,} \hlstr{", "}\hlstd{,}
                                           \hlcom{##"\textbackslash{}n",}
-                                          \hlstd{Sigma,} \hlstr{" = "}\hlstd{,} \hlnum{0}\hlstd{))))}
+                                          \hlstd{Sigma,} \hlstr{" = "}\hlstd{,} \hlnum{0}\hlstd{))))} \hlopt{+}
+  \hlkwd{scale_color_manual}\hlstd{(}\hlkwc{values}\hlstd{=}\hlkwd{rev}\hlstd{(}\hlkwd{gg_color_hue}\hlstd{(}\hlnum{4}\hlstd{)),} \hlkwc{name}\hlstd{=}\hlstr{""}\hlstd{)}\hlopt{+}
+  \hlkwd{scale_shape_manual}\hlstd{(}\hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{3}\hlstd{,}\hlnum{15}\hlstd{,}\hlnum{17}\hlstd{,}\hlnum{16}\hlstd{),}\hlkwc{name}\hlstd{=}\hlstr{""}\hlstd{)}
 \end{alltt}
 \end{kframe}
 \end{knitrout}
@@ -274,21 +277,23 @@ Panel a):
   \hlkwd{ylab}\hlstd{(}\hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(Var,} \hlstr{"("}\hlstd{, mu[}\hlnum{1}\hlstd{]}\hlopt{^}\hlstd{MT,} \hlstr{")"}\hlstd{,} \hlstr{"/"}\hlstd{,}
                         \hlstd{Var,} \hlstr{"("}\hlstd{, mu[}\hlnum{1}\hlstd{]}\hlopt{^}\hlstd{M,} \hlstr{")"}\hlstd{)))} \hlopt{+}
   \hlkwd{ylim}\hlstd{(}\hlkwd{min}\hlstd{(Vars.b}\hlopt{$}\hlstd{Ratio)}\hlopt{*}\hlnum{0.95}\hlstd{,} \hlnum{1}\hlstd{)} \hlopt{+}
-  \hlkwd{scale_color_discrete}\hlstd{(}\hlkwc{name} \hlstd{=} \hlstr{""}\hlstd{,}
-                       \hlkwc{labels} \hlstd{=}
-                         \hlkwd{c}\hlstd{(}\hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlstr{"/"}\hlstd{, S}\hlopt{^}\hlnum{2}\hlstd{,} \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{(),}
-                                            \hlnum{1}\hlopt{/}\hlnum{5}\hlstd{)),}
-                           \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlstr{"/"}\hlstd{, S}\hlopt{^}\hlnum{2}\hlstd{,} \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{(),}
-                                            \hlnum{1}\hlstd{)),}
-                           \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlstr{"/"}\hlstd{, S}\hlopt{^}\hlnum{2}\hlstd{,} \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{(),}
-                                            \hlnum{5}\hlstd{))))} \hlopt{+}
-  \hlkwd{scale_shape_discrete}\hlstd{(}\hlkwc{name} \hlstd{=} \hlstr{""}\hlstd{,}
-                       \hlkwc{labels} \hlstd{=}
-                         \hlkwd{c}\hlstd{(}\hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlstr{"/"}\hlstd{, S}\hlopt{^}\hlnum{2}\hlstd{,} \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{(),}
-                                            \hlnum{1}\hlopt{/}\hlnum{5}\hlstd{)),}
-                           \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlstr{"/"}\hlstd{, S}\hlopt{^}\hlnum{2}\hlstd{,} \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{(),}
-                                            \hlnum{1}\hlstd{)),}
-                           \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlstr{"/"}\hlstd{, S}\hlopt{^}\hlnum{2}\hlstd{,} \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{(),}
+  \hlkwd{scale_color_manual}\hlstd{(}\hlkwc{values}\hlstd{=}\hlkwd{gg_color_hue}\hlstd{(}\hlnum{4}\hlstd{)[}\hlopt{-}\hlnum{1}\hlstd{],}
+                     \hlkwc{name} \hlstd{=} \hlstr{""}\hlstd{,}
+                     \hlkwc{labels} \hlstd{=}
+                       \hlkwd{c}\hlstd{(}\hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlstr{"/"}\hlstd{, S}\hlopt{^}\hlnum{2}\hlstd{,} \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{(),}
+                                          \hlnum{1}\hlopt{/}\hlnum{5}\hlstd{)),}
+                         \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlstr{"/"}\hlstd{, S}\hlopt{^}\hlnum{2}\hlstd{,} \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{(),}
+                                          \hlnum{1}\hlstd{)),}
+                         \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlstr{"/"}\hlstd{, S}\hlopt{^}\hlnum{2}\hlstd{,} \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{(),}
+                                          \hlnum{5}\hlstd{))))} \hlopt{+}
+  \hlkwd{scale_shape_manual}\hlstd{(}\hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{17}\hlstd{,}\hlnum{15}\hlstd{,}\hlnum{3}\hlstd{),}
+    \hlkwc{name} \hlstd{=} \hlstr{""}\hlstd{,}
+                     \hlkwc{labels} \hlstd{=}
+                       \hlkwd{c}\hlstd{(}\hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlstr{"/"}\hlstd{, S}\hlopt{^}\hlnum{2}\hlstd{,} \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{(),}
+                                          \hlnum{1}\hlopt{/}\hlnum{5}\hlstd{)),}
+                         \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlstr{"/"}\hlstd{, S}\hlopt{^}\hlnum{2}\hlstd{,} \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{(),}
+                                          \hlnum{1}\hlstd{)),}
+                         \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlstr{"/"}\hlstd{, S}\hlopt{^}\hlnum{2}\hlstd{,} \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{(),}
                                             \hlnum{5}\hlstd{))))} \hlopt{+}
   \hlkwd{labs}\hlstd{(}\hlkwc{color}\hlstd{=}\hlstr{""}\hlstd{,} \hlkwc{shape}\hlstd{=}\hlstr{""}\hlstd{,}
        \hlkwc{title}\hlstd{=}\hlkwd{expression}\hlstd{(}\hlkwd{atop}\hlstd{(}\hlstr{"(a)"}\hlstd{,} \hlkwd{paste}\hlstd{(}\hlstr{"Random effects: "}\hlstd{,}
@@ -314,21 +319,23 @@ Panel c):
   \hlkwd{ylab}\hlstd{(}\hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(Var,} \hlstr{"("}\hlstd{, mu[}\hlnum{1}\hlstd{]}\hlopt{^}\hlstd{MT,} \hlstr{")"}\hlstd{,} \hlstr{"/"}\hlstd{,}
                         \hlstd{Var,} \hlstr{"("}\hlstd{, mu[}\hlnum{1}\hlstd{]}\hlopt{^}\hlstd{M,} \hlstr{")"}\hlstd{)))} \hlopt{+}
   \hlkwd{ylim}\hlstd{(}\hlkwd{min}\hlstd{(Vars.c}\hlopt{$}\hlstd{Ratio)}\hlopt{*}\hlnum{0.9}\hlstd{,} \hlnum{1}\hlstd{)} \hlopt{+}
-  \hlkwd{scale_color_discrete}\hlstd{(}\hlkwc{name} \hlstd{=} \hlstr{""}\hlstd{,}
+  \hlkwd{scale_color_manual}\hlstd{(}\hlkwc{values}\hlstd{=}\hlkwd{gg_color_hue}\hlstd{(}\hlnum{4}\hlstd{)[}\hlopt{-}\hlnum{1}\hlstd{],}
+                     \hlkwc{name} \hlstd{=} \hlstr{""}\hlstd{,}
                        \hlkwc{labels} \hlstd{=}
-                         \hlkwd{c}\hlstd{(}\hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlstr{"="}\hlstd{,}
+                         \hlkwd{c}\hlstd{(}\hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{(),}
                                             \hlnum{1}\hlopt{/}\hlnum{5}\hlstd{)),}
-                           \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlstr{"="}\hlstd{,}
+                           \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{(),}
                                             \hlnum{1}\hlstd{)),}
-                           \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlstr{"="}\hlstd{,}
+                           \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{(),}
                                             \hlnum{5}\hlstd{))))} \hlopt{+}
-  \hlkwd{scale_shape_discrete}\hlstd{(}\hlkwc{name} \hlstd{=} \hlstr{""}\hlstd{,}
+  \hlkwd{scale_shape_manual}\hlstd{(}\hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{17}\hlstd{,}\hlnum{15}\hlstd{,}\hlnum{3}\hlstd{),}
+                     \hlkwc{name} \hlstd{=} \hlstr{""}\hlstd{,}
                        \hlkwc{labels} \hlstd{=}
-                         \hlkwd{c}\hlstd{(}\hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlstr{"="}\hlstd{,}
+                         \hlkwd{c}\hlstd{(}\hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{(),}
                                             \hlnum{1}\hlopt{/}\hlnum{5}\hlstd{)),}
-                           \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlstr{"="}\hlstd{,}
+                           \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{(),}
                                             \hlnum{1}\hlstd{)),}
-                           \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlstr{"="}\hlstd{,}
+                           \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{(),}
                                             \hlnum{5}\hlstd{))))} \hlopt{+}
   \hlkwd{labs}\hlstd{(}\hlkwc{color}\hlstd{=}\hlstr{""}\hlstd{,} \hlkwc{shape}\hlstd{=}\hlstr{""}\hlstd{,}
        \hlkwc{title}\hlstd{=}\hlkwd{expression}\hlstd{(}\hlkwd{atop}\hlstd{(}\hlstr{"(c)"}\hlstd{,} \hlkwd{paste}\hlstd{(}\hlstr{"Random effects: "}\hlstd{,}
@@ -351,21 +358,23 @@ Panel d):
   \hlstd{themeUsed}\hlopt{+}
   \hlkwd{ylab}\hlstd{(}\hlkwd{expression}\hlstd{(RelEff))} \hlopt{+}
   \hlkwd{ylim}\hlstd{(}\hlkwd{min}\hlstd{(RelEff.d}\hlopt{$}\hlstd{RelEff)}\hlopt{*}\hlnum{0.95}\hlstd{,} \hlnum{1}\hlstd{)} \hlopt{+}
-  \hlkwd{scale_color_discrete}\hlstd{(}\hlkwc{name} \hlstd{=} \hlstr{""}\hlstd{,}
-                       \hlkwc{labels} \hlstd{=}
-                         \hlkwd{c}\hlstd{(}\hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlstr{"/"}\hlstd{, S}\hlopt{^}\hlnum{2}\hlstd{,} \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{(),}
-                                            \hlnum{1}\hlopt{/}\hlnum{5}\hlstd{)),}
-                           \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlstr{"/"}\hlstd{, S}\hlopt{^}\hlnum{2}\hlstd{,} \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{(),}
-                                            \hlnum{1}\hlstd{)),}
-                           \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlstr{"/"}\hlstd{, S}\hlopt{^}\hlnum{2}\hlstd{,} \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{(),}                                            \hlnum{5}\hlstd{))))} \hlopt{+}
-  \hlkwd{scale_shape_discrete}\hlstd{(}\hlkwc{name} \hlstd{=} \hlstr{""}\hlstd{,}
-                       \hlkwc{labels} \hlstd{=}
-                         \hlkwd{c}\hlstd{(}\hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlstr{"/"}\hlstd{, S}\hlopt{^}\hlnum{2}\hlstd{,} \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{(),}
-                                            \hlnum{1}\hlopt{/}\hlnum{5}\hlstd{)),}
-                           \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlstr{"/"}\hlstd{, S}\hlopt{^}\hlnum{2}\hlstd{,} \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{(),}
-                                            \hlnum{1}\hlstd{)),}
-                           \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlstr{"/"}\hlstd{, S}\hlopt{^}\hlnum{2}\hlstd{,} \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{(),}
-                                            \hlnum{5}\hlstd{))))} \hlopt{+}
+  \hlkwd{scale_color_manual}\hlstd{(}\hlkwc{values}\hlstd{=}\hlkwd{gg_color_hue}\hlstd{(}\hlnum{4}\hlstd{)[}\hlopt{-}\hlnum{1}\hlstd{],}
+                     \hlkwc{name} \hlstd{=} \hlstr{""}\hlstd{,}
+                     \hlkwc{labels} \hlstd{=}
+                       \hlkwd{c}\hlstd{(}\hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlstr{"/"}\hlstd{, S}\hlopt{^}\hlnum{2}\hlstd{,} \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{(),}
+                                          \hlnum{1}\hlopt{/}\hlnum{5}\hlstd{)),}
+                         \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlstr{"/"}\hlstd{, S}\hlopt{^}\hlnum{2}\hlstd{,} \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{(),}
+                                          \hlnum{1}\hlstd{)),}
+                         \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlstr{"/"}\hlstd{, S}\hlopt{^}\hlnum{2}\hlstd{,} \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{(),}                                            \hlnum{5}\hlstd{))))} \hlopt{+}
+  \hlkwd{scale_shape_manual}\hlstd{(}\hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{17}\hlstd{,}\hlnum{15}\hlstd{,}\hlnum{3}\hlstd{),}
+                     \hlkwc{name} \hlstd{=} \hlstr{""}\hlstd{,}
+                     \hlkwc{labels} \hlstd{=}
+                       \hlkwd{c}\hlstd{(}\hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlstr{"/"}\hlstd{, S}\hlopt{^}\hlnum{2}\hlstd{,} \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{(),}
+                                          \hlnum{1}\hlopt{/}\hlnum{5}\hlstd{)),}
+                         \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlstr{"/"}\hlstd{, S}\hlopt{^}\hlnum{2}\hlstd{,} \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{(),}
+                                          \hlnum{1}\hlstd{)),}
+                         \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlstr{"/"}\hlstd{, S}\hlopt{^}\hlnum{2}\hlstd{,} \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{(),}
+                                          \hlnum{5}\hlstd{))))} \hlopt{+}
   \hlkwd{labs}\hlstd{(}\hlkwc{color}\hlstd{=}\hlstr{""}\hlstd{,} \hlkwc{shape}\hlstd{=}\hlstr{""}\hlstd{,}
        \hlkwc{title}\hlstd{=}\hlkwd{expression}\hlstd{(}\hlkwd{atop}\hlstd{(}\hlstr{"(d)"}\hlstd{,} \hlkwd{paste}\hlstd{(}\hlstr{"Random effects: "}\hlstd{,}
                                           \hlstd{S[i]}\hlopt{^}\hlnum{2}\hlstd{,}  \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{() ,} \hlnum{1}\hlstd{,} \hlstr{", "}\hlstd{,}
@@ -373,32 +382,13 @@ Panel d):
                                           \hlstd{rho}\hlopt{^}\hlstd{BS,} \hlstr{" = "}\hlstd{,} \hlnum{0}\hlstd{,} \hlstr{", "}\hlstd{,}
                                           \hlcom{##"\textbackslash{}n",}
                                           \hlstd{I,} \hlstr{" = "}\hlstd{,} \hlnum{20}\hlstd{))))} \hlopt{+}
-  \hlkwd{scale_linetype_discrete}\hlstd{(}\hlkwc{name} \hlstd{=} \hlstr{""}\hlstd{,}
-                          \hlkwc{labels} \hlstd{=}
-                            \hlkwd{c}\hlstd{(}\hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(RelEff)),}
-                              \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(RelEff}\hlopt{^}\hlstd{T))))} \hlopt{+}
-  \hlkwd{scale_color_discrete}\hlstd{(}\hlkwc{name} \hlstd{=} \hlstr{""}\hlstd{,}
-                       \hlkwc{labels} \hlstd{=}
-                         \hlkwd{c}\hlstd{(}\hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlstr{"/"}\hlstd{, S}\hlopt{^}\hlnum{2}\hlstd{,} \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{(),}
-                                            \hlnum{1}\hlopt{/}\hlnum{5}\hlstd{)),}
-                           \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlstr{"/"}\hlstd{, S}\hlopt{^}\hlnum{2}\hlstd{,} \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{(),}
-                                            \hlnum{1}\hlstd{)),}
-                           \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlstr{"/"}\hlstd{, S}\hlopt{^}\hlnum{2}\hlstd{,} \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{(),}
-                                            \hlnum{5}\hlstd{))))} \hlopt{+}
-  \hlkwd{scale_shape_discrete}\hlstd{(}\hlkwc{name} \hlstd{=} \hlstr{""}\hlstd{,}
-                       \hlkwc{labels} \hlstd{=}
-                         \hlkwd{c}\hlstd{(}\hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlstr{"/"}\hlstd{, S}\hlopt{^}\hlnum{2}\hlstd{,} \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{(),}
-                                            \hlnum{1}\hlopt{/}\hlnum{5}\hlstd{)),}
-                           \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlstr{"/"}\hlstd{, S}\hlopt{^}\hlnum{2}\hlstd{,} \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{(),}
-                                            \hlnum{1}\hlstd{)),}
-                           \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(sigma}\hlopt{^}\hlnum{2}\hlstd{,} \hlstr{"/"}\hlstd{, S}\hlopt{^}\hlnum{2}\hlstd{,} \hlkwd{phantom}\hlstd{()} \hlopt{%~~%} \hlkwd{phantom}\hlstd{(),}
-                                            \hlnum{5}\hlstd{))))}
+  \hlkwd{scale_linetype_manual}\hlstd{(}\hlkwc{values}\hlstd{=}\hlnum{2}\hlopt{:}\hlnum{1}\hlstd{,}
+                        \hlkwc{name} \hlstd{=} \hlstr{""}\hlstd{,}
+                        \hlkwc{labels} \hlstd{=}
+                          \hlkwd{c}\hlstd{(}\hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(RelEff)),}
+                            \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(RelEff}\hlopt{^}\hlstd{T))))}
 \end{alltt}
-
-
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Scale for 'colour' is already present. Adding another\\\#\# scale for 'colour', which will replace the existing\\\#\# scale.}}
-
-{\ttfamily\noindent\itshape\color{messagecolor}{\#\# Scale for 'shape' is already present. Adding another\\\#\# scale for 'shape', which will replace the existing scale.}}\end{kframe}
+\end{kframe}
 \end{knitrout}
 
 

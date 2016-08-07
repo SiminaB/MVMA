@@ -110,13 +110,16 @@ panelB <- ggplot(Vars.a, aes(x=p, y=Ratio))+
   themeUsed+
   ylab(expression(paste(Var, "(", mu[1]^MT, ")", "/",
                         Var, "(", mu[1]^M, ")"))) +
+  
   ylim(min(Vars.a$Ratio)*0.9, 1) +
   labs(color="", shape="",
        title=expression(atop("(b)", paste("Random effects: ",
                                           S[i]^2,  phantom() %~~% phantom() , 1, ", ",
                                           rho[i], phantom() %~~% phantom(), (i-1)/I, ", ",
                                           ##"\n",
-                                          Sigma, " = ", 0))))
+                                          Sigma, " = ", 0)))) +
+  scale_color_manual(values=rev(gg_color_hue(4)), name="")+
+  scale_shape_manual(values=c(3,15,17,16),name="")
 
 @
 
@@ -188,21 +191,23 @@ panelA <- ggplot(Vars.b, aes(x=p, y=Ratio))+
   ylab(expression(paste(Var, "(", mu[1]^MT, ")", "/",
                         Var, "(", mu[1]^M, ")"))) +
   ylim(min(Vars.b$Ratio)*0.95, 1) +
-  scale_color_discrete(name = "",
-                       labels = 
-                         c(expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
-                                            1/5)),
-                           expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
-                                            1)),
-                           expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
-                                            5)))) +
-  scale_shape_discrete(name = "",
-                       labels = 
-                         c(expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
-                                            1/5)),
-                           expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
-                                            1)),
-                           expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
+  scale_color_manual(values=gg_color_hue(4)[-1],
+                     name = "",
+                     labels = 
+                       c(expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
+                                          1/5)),
+                         expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
+                                          1)),
+                         expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
+                                          5)))) +
+  scale_shape_manual(values=c(17,15,3),
+    name = "",
+                     labels = 
+                       c(expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
+                                          1/5)),
+                         expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
+                                          1)),
+                         expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
                                             5)))) +     
   labs(color="", shape="",
        title=expression(atop("(a)", paste("Random effects: ",
@@ -210,7 +215,8 @@ panelA <- ggplot(Vars.b, aes(x=p, y=Ratio))+
                                           rho[i], phantom() %~~% phantom(), (i-1)/I, ", ",
                                           rho^BS, " = ", 0.5, ", ",
                                           ##"\n",
-                                          I, " = ", 20))))
+                                          I, " = ", 20)))) 
+
 @
 
 Panel c):
@@ -224,21 +230,23 @@ panelC <- ggplot(Vars.c, aes(x=p, y=Ratio))+
   ylab(expression(paste(Var, "(", mu[1]^MT, ")", "/",
                         Var, "(", mu[1]^M, ")"))) +
   ylim(min(Vars.c$Ratio)*0.9, 1) +
-  scale_color_discrete(name = "",
+  scale_color_manual(values=gg_color_hue(4)[-1],
+                     name = "",
                        labels = 
-                         c(expression(paste(sigma^2, "=",
+                         c(expression(paste(sigma^2, phantom() %~~% phantom(),
                                             1/5)),
-                           expression(paste(sigma^2, "=",
+                           expression(paste(sigma^2, phantom() %~~% phantom(),
                                             1)),
-                           expression(paste(sigma^2, "=",
+                           expression(paste(sigma^2, phantom() %~~% phantom(),
                                             5)))) +
-  scale_shape_discrete(name = "",
+  scale_shape_manual(values=c(17,15,3),
+                     name = "",
                        labels = 
-                         c(expression(paste(sigma^2, "=",
+                         c(expression(paste(sigma^2, phantom() %~~% phantom(),
                                             1/5)),
-                           expression(paste(sigma^2, "=",
+                           expression(paste(sigma^2, phantom() %~~% phantom(),
                                             1)),
-                           expression(paste(sigma^2, "=",
+                           expression(paste(sigma^2, phantom() %~~% phantom(),
                                             5)))) +     
   labs(color="", shape="",
        title=expression(atop("(c)", paste("Random effects: ",
@@ -257,21 +265,23 @@ panelD <- ggplot(RelEff.d, aes(x=p, y=RelEff))+
   themeUsed+
   ylab(expression(RelEff)) +
   ylim(min(RelEff.d$RelEff)*0.95, 1) +
-  scale_color_discrete(name = "",
-                       labels = 
-                         c(expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
-                                            1/5)),
-                           expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
-                                            1)),
-                           expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),                                            5)))) +
-  scale_shape_discrete(name = "",
-                       labels = 
-                         c(expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
-                                            1/5)),
-                           expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
-                                            1)),
-                           expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
-                                            5)))) +     
+  scale_color_manual(values=gg_color_hue(4)[-1],
+                     name = "",
+                     labels = 
+                       c(expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
+                                          1/5)),
+                         expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
+                                          1)),
+                         expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),                                            5)))) +
+  scale_shape_manual(values=c(17,15,3),
+                     name = "",
+                     labels = 
+                       c(expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
+                                          1/5)),
+                         expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
+                                          1)),
+                         expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
+                                          5)))) +     
   labs(color="", shape="",
        title=expression(atop("(d)", paste("Random effects: ",
                                           S[i]^2,  phantom() %~~% phantom() , 1, ", ",
@@ -279,26 +289,11 @@ panelD <- ggplot(RelEff.d, aes(x=p, y=RelEff))+
                                           rho^BS, " = ", 0, ", ",
                                           ##"\n",
                                           I, " = ", 20)))) +
-  scale_linetype_discrete(name = "",
-                          labels = 
-                            c(expression(paste(RelEff)),
-                              expression(paste(RelEff^T)))) +
-  scale_color_discrete(name = "",
-                       labels = 
-                         c(expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
-                                            1/5)),
-                           expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
-                                            1)),
-                           expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
-                                            5)))) +
-  scale_shape_discrete(name = "",
-                       labels = 
-                         c(expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
-                                            1/5)),
-                           expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
-                                            1)),
-                           expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
-                                            5)))) 
+  scale_linetype_manual(values=2:1,
+                        name = "",
+                        labels = 
+                          c(expression(paste(RelEff)),
+                            expression(paste(RelEff^T)))) 
 @
 
 
