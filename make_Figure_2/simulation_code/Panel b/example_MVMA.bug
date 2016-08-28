@@ -1,0 +1,15 @@
+model 
+{
+for (i in 1:N){
+    y[i,1:p]~dmnorm(pre.theta[i,],sigma[pos[i]:pos2[i],1:p])
+   }
+   for (i in 1:N){
+   pre.theta[i,1:p]~dmnorm(mu[1:p],intau[1:p,1:p])
+   }
+   for (i in 1:p){
+   mu[i]~dnorm(0.00000E+00,0.001)
+   }
+
+intau[1:p,1:p]~dwish(Omega,p)
+
+}

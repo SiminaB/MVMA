@@ -15,7 +15,7 @@
 \hypersetup{
  pdfstartview={XYZ null null 1}}
  
-\title{Code for Supplementary Figure 3} 
+\title{Figure S3: Fixed effects framework with AR(1), block diagonal structures} 
  
 \usepackage{breakurl}
 \begin{document}
@@ -24,284 +24,406 @@
 
 <<setup, include=FALSE, cache=FALSE>>=
 # this is equivalent to \SweaveOpts{...}
-opts_chunk$set(fig.path='figures/', fig.align='center', fig.show='hold')##, dev='postscript')
+opts_chunk$set(fig.path='figures/', fig.align='center', fig.show='hold', echo=TRUE)
 options(replace.assign=TRUE,width=60)
 @
 
-\section{Get the combined datasets for all the scenarios}
-
-Load the necessary libraries:
+%Load the necessary libraries, source the file with the R functions:
 <<loabLibs, include=TRUE>>=
 library(ggplot2)
+library(Matrix)
 
 source("functions.R")
 @
 
 Will use the same theme throughout, so just declare this variable:
 <<>>=
-themeUsed <- theme_bw(base_size = 20) +
+themeUsed <-  theme_bw(base_size = 20)+
   theme(axis.line = element_line(colour = "black"),
-        plot.title = element_text(size = 15, hjust=0.5),
+        plot.title = element_text(size = 16, hjust = 0.5),
         panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         panel.border = element_blank(),
         panel.background = element_blank(),
-        legend.background = element_rect(fill="transparent"),
         legend.key = element_blank(),
         legend.text.align = 0,
-        legend.position = c(0.15,0.28),
         axis.line.x = element_line(color="black", size = 0.5), ##this is to show axes - bug in this version of ggplot2
         axis.line.y = element_line(color="black", size = 0.5)) 
 @
-
-\section{Get combined dataset for panel a)}
-
-Load the files representing the summary for each scenario and save the results in a single dataframe, \textttt{VarsAll}:
-<<combCombA, include=TRUE>>=
-allFiles <- list.files("../make_Figure_2/simResultsComb")
-##remove all the files with "Suppl" in title
-allFiles <- allFiles[-grep("Suppl", allFiles)]
-
-##save the three Vars for the different combinations
-VarsAll <- expand.grid(I = c(5, 10, 15, 20),
-                       p = 2:10,
-                       corrBtw = c(0, 0.5),
-                       varBtw = c(0, 1))
-
-##only keep combinations of corrBtw=0 & varBtw=0, corrBtw=0.5 & varBtw=1
-VarsAll <- VarsAll[(VarsAll$corrBtw == 0 & VarsAll$varBtw == 0) |
-                   (VarsAll$corrBtw == 0.5 & VarsAll$varBtw == 1) ,]
-
-VarsAll$known <- VarsAll$unknown <- VarsAll$univKnown <- VarsAll$univ <- NA
-
-for(file in 1:length(allFiles))
-{
-    load(paste("../make_Figure_2/simResultsComb", 
-               allFiles[file], sep="/"))
-
-    rowNr <- gsub("combine_cost_of_estimation_", "", allFiles[file])
-    rowNr <- gsub(".RData", "", rowNr)
-    rowNr <- as.numeric(rowNr)
-
-    VarsAll[rowNr, colnames(VarsAll)] <- Vars[rowNr, colnames(VarsAll)]
-}
-VarsAll$Ratio <- VarsAll$known/VarsAll$unknown
-VarsAll$RelEff <- VarsAll$unknown/VarsAll$univ
-VarsAll$RelEffT <- VarsAll$known/VarsAll$univKnown
-range(VarsAll$Ratio)
-
-VarsAll$I <- as.factor(paste("I=", VarsAll$I, sep=""))
-VarsAll$I <- relevel(VarsAll$I, ref="I=5")
-@
-
-Separate out what is needed for Panel b:
-<<sepPanelA, include=TRUE>>=
-Vars.a <- VarsAll[VarsAll$corrBtw == 0 &
-  VarsAll$varBtw == 0,]
-@
-
-\section{Create plot for panel b}
-
-Panel b):
-<<Figure_2_panel_b, fig.width=6, fig.height=5, dpi=800>>=
-panelB <- ggplot(Vars.a, aes(x=p, y=Ratio))+
-  geom_point(size=3.0, aes(color=I, shape=I))+
-  geom_line(aes(color=I, shape=I))+
-  themeUsed+
-  ylab(expression(paste(Var, "(", mu[1]^MT, ")", "/",
-                        Var, "(", mu[1]^M, ")"))) +
   
-  ylim(min(Vars.a$Ratio)*0.9, 1) +
-  labs(color="", shape="",
-       title=expression(atop("(b)", paste("Random effects: ",
-                                          S[i]^2,  phantom() %~~% phantom() , 1, ", ",
-                                          rho[i], phantom() %~~% phantom(), (i-1)/I, ", ",
-                                          ##"\n",
-                                          Sigma, " = ", 0)))) +
-  scale_color_manual(values=rev(gg_color_hue(4)), name="")+
-  scale_shape_manual(values=c(3,15,17,16),name="")
 
-@
+\section{AR(1) correlation matrices}
 
-\section{Get combined dataset for panels a),c),d)}
-
-Load the files representing the summary for each scenario and save the results in a single dataframe, \textttt{VarsAll}:
-<<combComb, include=TRUE>>=
-allFiles <- list.files("../make_Figure_2/simResultsComb")
-##keep only files with "Suppl" in title
-allFiles <- allFiles[grep("Suppl", allFiles)]
-
-##save the three Vars for the different combinations
-VarsAll <- expand.grid(I = 20, 
-                       p = 2:10,
-                       corrBtw = c(0, 0.5),
-                       varBtw = c(1/5, 1, 5))
-
-VarsAll$known <- VarsAll$unknown <- VarsAll$univKnown <- VarsAll$univ <- NA
-
-for(file in 1:length(allFiles))
+These results are for the $I=2, p\ge 2$ autoregressive case with AR(1) with equal within-study variances,
+so the parameters we vary are: $r, \rho_1, \rho_2, p$. 
+We save the relative efficiencies for only one of coefficients, as they are all equal.
+We consider $\rho_1 = 0$.
+<<loop, include=TRUE>>=
+##save results in data frame
+bigMat <- expand.grid(rho1 = 0,
+                      rho2 = (0:3)/4,
+                      r = c(1, 3, 5, 9)/10,
+                      p = 2:20,
+                      RelEff = NA)
+for(i in 1:nrow(bigMat))
 {
-    load(paste("../make_Figure_2/simResultsComb", allFiles[file], sep="/"))
-
-    rowNr <- gsub("combine_cost_of_estimation_Suppl_", "", allFiles[file])
-    rowNr <- gsub(".RData", "", rowNr)
-    rowNr <- as.numeric(rowNr)
-
-    VarsAll[rowNr, colnames(VarsAll)] <- Vars[rowNr, colnames(VarsAll)]
+    rho1 <- bigMat[i, 1]
+    rho2 <- bigMat[i, 2]
+    r <- bigMat[i, 3]
+    p <- bigMat[i, 4]
+    
+    ##get variance-covariance matrices
+    S1 <- r*ARMAcor(phi=1, rho=rho1, n=p) 
+    S2 <- (1-r)*ARMAcor(phi=1, rho=rho2, n=p) 
+    U1 <- diag(diag(S1))
+    U2 <- diag(diag(S2))
+    
+    varMVMA <- solve(solve(S1)+solve(S2))
+    varUVMA <- solve(solve(U1)+solve(U2)) %*%
+      (solve(U1) %*% S1 %*% solve(U1) + 
+         solve(U2) %*% S2 %*% solve(U2)) %*%
+      solve(solve(U1)+solve(U2))
+    
+    bigMat$RelEff[i] <- varMVMA[1,1]/varUVMA[1,1]
 }
-VarsAll$Ratio <- VarsAll$known/VarsAll$unknown
-VarsAll$RelEff <- VarsAll$unknown/VarsAll$univ
-VarsAll$RelEffT <- VarsAll$known/VarsAll$univKnown
-range(VarsAll$Ratio)
+
+##for Panel b), r = 0.5:
+bigMat.b <- bigMat[bigMat[,"r"]==0.5, ]
+##transform back to data frame (for ggplot)
+bigMat.b <- as.data.frame(bigMat.b)
+##make rho2 into factor (for ggplot)
+bigMat.b$rho2 <- as.factor(bigMat.b$rho2)
 @
 
-Separate out what is needed for Panels a),c)d):
-<<sepPanels, include=TRUE>>=
-Vars.c <- VarsAll[VarsAll$corrBtw == 0,]
-Vars.b <- VarsAll[VarsAll$corrBtw == 0.5,]
-
-###################################
-
-##for panel d), have both RelEff and RelEffT
-##probably easier to just create another object
-RelEff.d <- 
-  rbind(cbind(as.matrix(Vars.c[,c("I", "p", "corrBtw", "varBtw", "RelEff"),]),"RelEff"),
-        cbind(as.matrix(Vars.c[,c("I", "p", "corrBtw", "varBtw", "RelEffT"),]),"RelEffT"))
-colnames(RelEff.d)[6] <- "Estimate" 
-RelEff.d <- as.data.frame(RelEff.d)
-sapply(RelEff.d, class)
-
-RelEff.d$p <- as.numeric(as.character(RelEff.d$p))
-RelEff.d$corrBtw <- as.numeric(as.character(RelEff.d$corrBtw))
-RelEff.d$varBtw <- as.numeric(as.character(RelEff.d$varBtw))
-RelEff.d$RelEff <- as.numeric(as.character(RelEff.d$RelEff))
-
-@
-
-\section{Create plots for panels a),c),d)}
-
-Panel a): 
-<<Figure_S3_panel_a, fig.width=6, fig.height=5, dpi=800>>=
-panelA <- ggplot(Vars.b, aes(x=p, y=Ratio))+
-  geom_point(size=3.0, aes(color=as.factor(varBtw), 
-                           shape=as.factor(varBtw)))+
-  geom_line(aes(color=as.factor(varBtw), 
-                shape=as.factor(varBtw)))+
+<<Figure_S3_panel_a, fig.width=6, fig.height=5>>=
+panelA <- ggplot(bigMat.b, 
+                 aes(x=p, y=RelEff))+
+  geom_line(aes(color=rho2, shape=rho2)) +
+  geom_point(size=3.0, aes(color=rho2, shape=rho2)) +
   themeUsed+
-  ylab(expression(paste(Var, "(", mu[1]^MT, ")", "/",
-                        Var, "(", mu[1]^M, ")"))) +
-  ylim(min(Vars.b$Ratio)*0.95, 1) +
-  scale_color_manual(values=gg_color_hue(4)[-1],
-                     name = "",
-                     labels = 
-                       c(expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
-                                          1/5)),
-                         expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
-                                          1)),
-                         expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
-                                          5)))) +
-  scale_shape_manual(values=c(17,15,3),
-    name = "",
-                     labels = 
-                       c(expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
-                                          1/5)),
-                         expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
-                                          1)),
-                         expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
-                                            5)))) +     
-  labs(color="", shape="",
-       title=expression(atop("(a)", paste("Random effects: ",
-                                          S[i]^2,  phantom() %~~% phantom() , 1, ", ",
-                                          rho[i], phantom() %~~% phantom(), (i-1)/I, ", ",
-                                          rho^BS, " = ", 0.5, ", ",
-                                          ##"\n",
-                                          I, " = ", 20)))) 
-
-@
-
-Panel c):
-<<Figure_S3_panel_c, fig.width=6, fig.height=5, dpi=800>>=
-panelC <- ggplot(Vars.c, aes(x=p, y=Ratio))+
-  geom_point(size=3.0, aes(color=as.factor(varBtw), 
-                           shape=as.factor(varBtw)))+
-  geom_line(aes(color=as.factor(varBtw), 
-                shape=as.factor(varBtw)))+
-  themeUsed+
-  ylab(expression(paste(Var, "(", mu[1]^MT, ")", "/",
-                        Var, "(", mu[1]^M, ")"))) +
-  ylim(min(Vars.c$Ratio)*0.9, 1) +
-  scale_color_manual(values=gg_color_hue(4)[-1],
-                     name = "",
+  scale_color_discrete(name = "",
                        labels = 
-                         c(expression(paste(sigma^2, phantom() %~~% phantom(),
-                                            1/5)),
-                           expression(paste(sigma^2, phantom() %~~% phantom(),
-                                            1)),
-                           expression(paste(sigma^2, phantom() %~~% phantom(),
-                                            5)))) +
-  scale_shape_manual(values=c(17,15,3),
-                     name = "",
+                         c(expression(paste(rho[2], "=",
+                                            0)),
+                           expression(paste(rho[2], "=",
+                                            0.25)),
+                           expression(paste(rho[2], "=",
+                                            0.5)),
+                           expression(paste(rho[2], "=",
+                                            0.75)))) +
+  scale_shape_discrete(name = "",
                        labels = 
-                         c(expression(paste(sigma^2, phantom() %~~% phantom(),
-                                            1/5)),
-                           expression(paste(sigma^2, phantom() %~~% phantom(),
-                                            1)),
-                           expression(paste(sigma^2, phantom() %~~% phantom(),
-                                            5)))) +     
-  labs(color="", shape="",
-       title=expression(atop("(c)", paste("Random effects: ",
-                                          S[i]^2,  phantom() %~~% phantom() , 1, ", ",
-                                          rho[i], phantom() %~~% phantom(), (i-1)/I, ", ",
-                                          rho^BS, " = ", 0, ", ",
-                                          ##"\n",
-                                          I, " = ", 20))))
+                         c(expression(paste(rho[2], "=",
+                                            0)),
+                           expression(paste(rho[2], "=",
+                                            0.25)),
+                           expression(paste(rho[2], "=",
+                                            0.5)),
+                           expression(paste(rho[2], "=",
+                                            0.75)))) + 
+  labs(title=
+         expression(atop("(a): AR(1)",
+                         paste("Fixed effects: I = 2, ", 
+                               rho[1], " = ", 0, ", ",
+                               r, " = ", 0.5))))
+
 @
 
-Panel d):
-<<Figure_S3_panel_d, fig.width=6, fig.height=5, dpi=800>>=
-panelD <- ggplot(RelEff.d, aes(x=p, y=RelEff))+
-  geom_point(size=3.0, aes(color=as.factor(varBtw), shape=as.factor(varBtw)))+
-  geom_line(aes(color=as.factor(varBtw), shape=as.factor(varBtw), linetype=Estimate))+
+The following results are for the $I=20, p\ge 2$ AR(1) case with equal within-study variances
+and $S_i^2 \equiv S^2, \rho_i = \frac{\rho(i-1)}{I}$, so the parameters we vary are $\rho, p$.
+We save the relative efficiencies for only one of coefficients, as they are all equal.
+
+<<loop20_AR1, include=TRUE>>=
+##number of studies
+I <- 20
+
+##save results in data frame
+bigMat <- expand.grid(rho = c(0, 0.25, 0.5, 0.75, 1),
+                      p = 2:20,
+                      RelEff = NA)
+
+for(n in 1:nrow(bigMat))
+{
+
+    rho <- bigMat[n, 1]
+    p <- bigMat[n, 2]
+    
+    ##index over the studies
+    i <- 1:I
+
+    ##get all the within-study variance matrices
+    Si <- 
+      lapply(i, 
+             function(i, rho, p, I){ARMAcor(phi=1, 
+                                            rho=rho*(i-1)/I, 
+                                            n=p) },
+             rho, p, I)
+    ##get inverses of Si
+    ##use: http://mathoverflow.net/questions/65795/inverse-of-an-ar1-or-laplacian-or-kac-murdock-szeg%C3%B6-matrix
+    ##Si.inv <- lapply(i,
+    ##                 function(i, rho, p, I){
+    ##                   rho.i <- rho*(i-1)/I;
+    ##                   Sinv <- matrix(0, p, p);
+    ##                   Sinv
+    ##                 }
+    
+    ##calculate the variances
+    VarMVMA <- VarUVMA2 <-
+      matrix(0, p, p)
+
+    for(i in 1:I)
+    {
+      VarMVMA <- VarMVMA + solve(Si[[i]])
+      VarUVMA2 <- VarUVMA2 + Si[[i]]
+    }
+    VarMVMA <- solve(VarMVMA)
+    VarUVMA <- VarUVMA2/I^2
+    
+    bigMat$RelEff[n] <- VarMVMA[1,1]/VarUVMA[1,1]
+}
+
+##make rho into factor (for ggplot)
+bigMat$rho <- paste("rho=", bigMat$rho, sep="")
+@
+
+<<Figure_S3_panel_b, fig.width=6, fig.height=5>>=
+panelB <- ggplot(bigMat, 
+                 aes(x=p, y=RelEff))+
+  geom_line(aes(color=rho, shape=rho)) +
+  geom_point(size=3.0, aes(color=rho, shape=rho)) +
+  scale_y_continuous(limits = c(min(bigMat$RelEff), 1)) +
+  scale_color_discrete(name = "",
+                       labels = 
+                         c(expression(paste(rho, "=",
+                                            0)),
+                           expression(paste(rho, "=",
+                                            0.25)),
+                           expression(paste(rho, "=",
+                                            0.5)),
+                           expression(paste(rho, "=",
+                                            0.75)),
+                           expression(paste(rho, "=",
+                                            1)))) +
+  scale_shape_discrete(name = "",
+                       labels = 
+                         c(expression(paste(rho, "=",
+                                            0)),
+                           expression(paste(rho, "=",
+                                            0.25)),
+                           expression(paste(rho, "=",
+                                            0.5)),
+                           expression(paste(rho, "=",
+                                            0.75)),
+                           expression(paste(rho, "=",
+                                            1)))) + 
   themeUsed+
-  ylab(expression(RelEff)) +
-  ylim(min(RelEff.d$RelEff)*0.95, 1) +
-  scale_color_manual(values=gg_color_hue(4)[-1],
-                     name = "",
-                     labels = 
-                       c(expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
-                                          1/5)),
-                         expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
-                                          1)),
-                         expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),                                            5)))) +
-  scale_shape_manual(values=c(17,15,3),
-                     name = "",
-                     labels = 
-                       c(expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
-                                          1/5)),
-                         expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
-                                          1)),
-                         expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
-                                          5)))) +     
-  labs(color="", shape="",
-       title=expression(atop("(d)", paste("Random effects: ",
-                                          S[i]^2,  phantom() %~~% phantom() , 1, ", ",
-                                          rho[i], phantom() %~~% phantom(), (i-1)/I, ", ",
-                                          rho^BS, " = ", 0, ", ",
-                                          ##"\n",
-                                          I, " = ", 20)))) +
-  scale_linetype_manual(values=2:1,
-                        name = "",
-                        labels = 
-                          c(expression(paste(RelEff)),
-                            expression(paste(RelEff^T)))) 
+  labs(title=
+         expression(atop("(b): AR(1)",
+                         paste("Fixed effects: I = 20, ", 
+                               S[list(kk,i)], " = ", 1, ", ",
+                               rho[i], " = ", rho(i-1)/I))))
+
 @
 
+\section{Block diagonal correlation matrices}
 
-\section{Put all panels together}
+These results are for the $I=2, p\ge 2$ case with block diagonal matrices with block size of 5, compound symmetry
+within the blocks, so the parameters we vary are: $r, \rho_1, \rho_2, p$. 
+We save the relative efficiencies for only one of coefficients, as they are all equal.
+We consider $\rho_1 = 0$.
+<<loop_bd, include=TRUE>>=
+##save results in data frame
+bigMat <- expand.grid(rho1 = 0,
+                      rho2 = (0:3)/4,
+                      r = c(1, 3, 5, 9)/10,
+                      p = 2:20,
+                      RelEff = NA)
+for(i in 1:nrow(bigMat))
+{
+    rho1 <- bigMat[i, 1]
+    rho2 <- bigMat[i, 2]
+    r <- bigMat[i, 3]
+    p <- bigMat[i, 4]
+    nrBlocks <- round(p/5)
+    
+    ##have one "incomplete block" if p is not divisible by 5
+    if(p %% 5 != 0)
+    {
+      nrBlocks <- nrBlocks + 1
+    }
+    
+    ##get variance-covariance matrices
+    S1 <- r*blockDiag(rho1, sizeBlock=5, nrBlocks=nrBlocks)
+    S2 <- (1-r)*blockDiag(rho2, sizeBlock=5, nrBlocks=nrBlocks)
+    ##reduce the size to p x p
+    S1 <- S1[1:p, 1:p]
+    S2 <- S2[1:p, 1:p]
+    
+    U1 <- diag(diag(S1))
+    U2 <- diag(diag(S2))
+    
+    varMVMA <- solve(solve(S1)+solve(S2))
+    varUVMA <- solve(solve(U1)+solve(U2)) %*%
+      (solve(U1) %*% S1 %*% solve(U1) + 
+         solve(U2) %*% S2 %*% solve(U2)) %*%
+      solve(solve(U1)+solve(U2))
+    
+    bigMat$RelEff[i] <- varMVMA[1,1]/varUVMA[1,1]
+}
 
-<<Figure_S3_panels_abcd, fig.width=12, fig.height=12, dpi=800>>=
+##for Panel b), r = 0.5:
+bigMat.b <- bigMat[bigMat[,"r"]==0.5, ]
+##transform back to data frame (for ggplot)
+bigMat.b <- as.data.frame(bigMat.b)
+##make rho2 into factor (for ggplot)
+bigMat.b$rho2 <- as.factor(bigMat.b$rho2)
+
+@
+
+<<Figure_S3_panel_c, fig.width=6, fig.height=5>>=
+panelC <- ggplot(bigMat.b, 
+                 aes(x=p, y=RelEff))+
+  geom_line(aes(color=rho2, shape=rho2)) +
+  geom_point(size=3.0, aes(color=rho2, shape=rho2)) +
+  themeUsed+
+  scale_color_discrete(name = "",
+                       labels = 
+                         c(expression(paste(rho[2], "=",
+                                            0)),
+                           expression(paste(rho[2], "=",
+                                            0.25)),
+                           expression(paste(rho[2], "=",
+                                            0.5)),
+                           expression(paste(rho[2], "=",
+                                            0.75)))) +
+  scale_shape_discrete(name = "",
+                       labels = 
+                         c(expression(paste(rho[2], "=",
+                                            0)),
+                           expression(paste(rho[2], "=",
+                                            0.25)),
+                           expression(paste(rho[2], "=",
+                                            0.5)),
+                           expression(paste(rho[2], "=",
+                                            0.75)))) + 
+  labs(title=
+         expression(atop("(c): Block diagonal (block size=5)",
+                         paste("Fixed effects: I = 2, ", 
+                               rho[1], " = ", 0, ", ",
+                               r, " = ", 0.5))))
+
+@
+
+The following results are for the $I=20, p\ge 2$ 
+case with block diagonal matrices with block size of 5, compound symmetry
+within the blocks, with equal within-study variances
+and $S_i^2 \equiv S^2, \rho_i = \frac{\rho(i-1)}{I}$, so the parameters we vary are $\rho, p$.
+We save the relative efficiencies for only one of coefficients, as they are all equal.
+
+<<loop20_bd, include=TRUE>>=
+##number of studies
+I <- 20
+
+##save results in data frame
+bigMat <- expand.grid(rho = c(0, 0.25, 0.5, 0.75, 1),
+                      p = 2:20,
+                      RelEff = NA)
+
+for(n in 1:nrow(bigMat))
+{
+    rho <- bigMat[n, 1]
+    p <- bigMat[n, 2]
+    nrBlocks <- round(p/5)
+    
+    ##have one "incomplete block" if p is not divisible by 5
+    if(p %% 5 != 0)
+    {
+      nrBlocks <- nrBlocks + 1
+    }
+    
+    ##index over the studies
+    i <- 1:I
+
+    ##get all the within-study variance matrices
+    Si <- 
+      lapply(i, 
+             function(i, rho, p, I, nrBlocks){S <- blockDiag(rho*(i-1)/I, sizeBlock=5, nrBlocks=nrBlocks);
+             S[1:p, 1:p]},
+             rho, p, I, nrBlocks)
+
+    ##calculate the variances
+    VarMVMA <- VarUVMA2 <-
+      matrix(0, p, p)
+
+    for(i in 1:I)
+    {
+      VarMVMA <- VarMVMA + solve(Si[[i]])
+      VarUVMA2 <- VarUVMA2 + Si[[i]]
+    }
+    VarMVMA <- solve(VarMVMA)
+    VarUVMA <- VarUVMA2/I^2
+    
+    bigMat$RelEff[n] <- VarMVMA[1,1]/VarUVMA[1,1]
+}
+
+##make rho into factor (for ggplot)
+bigMat$rho <- paste("rho=", bigMat$rho, sep="")
+@
+
+<<Figure_S3_panel_d, fig.width=6, fig.height=5>>=
+panelD <- ggplot(bigMat, 
+                 aes(x=p, y=RelEff))+
+  geom_line(aes(color=rho, shape=rho)) +
+  geom_point(size=3.0, aes(color=rho, shape=rho)) +
+  themeUsed+
+  scale_y_continuous(limits = c(min(bigMat$RelEff), 1)) +
+  scale_color_discrete(name = "",
+                       labels = 
+                         c(expression(paste(rho, "=",
+                                            0)),
+                           expression(paste(rho, "=",
+                                            0.25)),
+                           expression(paste(rho, "=",
+                                            0.5)),
+                           expression(paste(rho, "=",
+                                            0.75)),
+                           expression(paste(rho, "=",
+                                            1)))) +
+  scale_shape_discrete(name = "",
+                       labels = 
+                         c(expression(paste(rho, "=",
+                                            0)),
+                           expression(paste(rho, "=",
+                                            0.25)),
+                           expression(paste(rho, "=",
+                                            0.5)),
+                           expression(paste(rho, "=",
+                                            0.75)),
+                           expression(paste(rho, "=",
+                                            1)))) + 
+  labs(title=
+         expression(atop("(d): Block diagonal (block size=5)",
+                         paste("Fixed effects: I = 20, ", 
+                               S[list(kk,i)], " = ", 1, ", ",
+                               rho[i], " = ", rho(i-1)/I))))
+
+@
+
+\section{Put all four panels together}
+
+<<Figure_S3_panels_abcd, fig.width=15, fig.height=12, dpi=800>>=
 multiplot(panelA, panelC, panelB, panelD, cols=2)
 @
 
 
 \end{document}
+
+
+
+
+
+
+
+
+
+

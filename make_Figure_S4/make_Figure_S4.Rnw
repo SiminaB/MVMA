@@ -1,0 +1,356 @@
+\documentclass{article}
+\usepackage{alltt}
+\usepackage{amsmath}
+\usepackage[sc]{mathpazo}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{verbose,tmargin=2.5cm,bmargin=2.5cm,lmargin=2.5cm,rmargin=2.5cm}
+\setcounter{secnumdepth}{2}
+\setcounter{tocdepth}{2}
+\usepackage{url}
+\usepackage[unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=true,bookmarksopen=true,bookmarksopenlevel=2,
+ breaklinks=false,pdfborder={0 0 1},backref=false,colorlinks=false]
+ {hyperref}
+\hypersetup{
+ pdfstartview={XYZ null null 1}}
+
+\title{Code for Figure 2} 
+
+\usepackage{breakurl}
+\begin{document}
+\maketitle
+
+<<setup, include=FALSE, cache=FALSE>>=
+# this is equivalent to \SweaveOpts{...}
+opts_chunk$set(fig.path='figures/', fig.align='center', fig.show='hold')##, dev='postscript')
+options(replace.assign=TRUE,width=60)
+@
+
+Load the necessary libraries, source the file with the R functions:
+<<libsEtc, include=TRUE>>=
+library(ggplot2)
+
+source("functions.R")
+@
+
+Will use the same theme throughout, so just declare this variable:
+<<>>=
+themeUsed <- theme_bw(base_size = 20) +
+  theme(axis.line = element_line(colour = "black"),
+        plot.title = element_text(size = 15, hjust=0.5),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        panel.background = element_blank(),
+        legend.background = element_rect(fill="transparent"),
+        legend.key = element_blank(),
+        legend.text.align = 0,
+        legend.position = c(0.15,0.28),
+        axis.line.x = element_line(color="black", size = 0.5), ##this is to show axes - bug in this version of ggplot2
+        axis.line.y = element_line(color="black", size = 0.5)) 
+@
+
+\section{Panel a)}
+
+Get what is needed for panel a):
+Load the files representing the summary for each scenario with 0 heterogeneity and save the results in a single dataframe, \textttt{Vars0}:
+<<combComb0, include=TRUE>>=
+allFiles <- list.files("simResultsComb")
+##remove files that have "AR1_het" in the title
+allFiles <- allFiles[-grep("AR1_het", allFiles)]
+
+##save the three Vars for the different combinations
+VarsAll <- expand.grid(I = c(5, 10, 15, 20),
+                       p = 2:10,
+                       corrBtw = c(0,0.5),
+                       varBtw = c(0, 1))
+
+##only keep combinations of corrBtw=0 & varBtw=0, corrBtw=0.5 & varBtw=1
+VarsAll <- VarsAll[(VarsAll$corrBtw == 0 & VarsAll$varBtw == 0) |
+                   (VarsAll$corrBtw == 0.5 & VarsAll$varBtw == 1) ,]
+
+VarsAll$known <- VarsAll$unknown <- VarsAll$univKnown <- VarsAll$univ <- 
+  VarsAll$Bayes <- VarsAll$univBayes <- NA
+
+for(file in 1:length(allFiles))
+{
+    load(paste("simResultsComb", 
+               allFiles[file], sep="/"))
+
+    rowNr <- gsub("combine_cost_of_estimation_", "", allFiles[file])
+    rowNr <- gsub(".RData", "", rowNr)
+    rowNr <- as.numeric(rowNr)
+
+    VarsAll[rowNr, colnames(VarsAll)] <- Vars[rowNr, colnames(VarsAll)]
+}
+VarsAll$Ratio <- VarsAll$known/VarsAll$unknown
+VarsAll$RelEff <- VarsAll$unknown/VarsAll$univ
+VarsAll$RelEffT <- VarsAll$known/VarsAll$univKnown
+VarsAll$RelEffB <- VarsAll$Bayes/VarsAll$univBayes
+VarsAll$MVMAcomp <- VarsAll$unknown/VarsAll$Bayes
+range(VarsAll$Ratio)
+
+##only keep the ones with varBtw = 0 and I=20
+Vars0 <- VarsAll[VarsAll$varBtw == 0 & VarsAll$I == 20 ,]
+@
+
+Load the files representing the summary for each scenario with non-0 heterogeneity and save the results in a single dataframe, \textttt{VarsAll}:
+<<combCombHet, include=TRUE>>=
+allFiles <- list.files("simResultsComb")
+##keep only files that have "AR1_het" in the title
+allFiles <- allFiles[grep("AR1_het", allFiles)]
+
+##save the three Vars for the different combinations
+VarsAll <- expand.grid(I = 20, 
+                       p = 2:10,
+                       corrBtw = c(0.5),
+                       varBtw = c(1/5, 1, 5))
+
+VarsAll$known <- VarsAll$unknown <- VarsAll$univKnown <- VarsAll$univ <- 
+  VarsAll$Bayes <- VarsAll$univBayes <- NA
+
+for(file in 1:length(allFiles))
+{
+    load(paste("simResultsComb", allFiles[file], sep="/"))
+
+    rowNr <- gsub("combine_cost_of_estimation_AR1_het_", "", allFiles[file])
+    rowNr <- gsub(".RData", "", rowNr)
+    rowNr <- as.numeric(rowNr)
+
+    VarsAll[rowNr, colnames(VarsAll)] <- Vars[rowNr, colnames(VarsAll)]
+}
+VarsAll$Ratio <- VarsAll$known/VarsAll$unknown
+VarsAll$RelEff <- VarsAll$unknown/VarsAll$univ
+VarsAll$RelEffT <- VarsAll$known/VarsAll$univKnown
+VarsAll$RelEffB <- VarsAll$Bayes/VarsAll$univBayes
+VarsAll$MVMAcomp <- VarsAll$unknown/VarsAll$Bayes
+range(VarsAll$Ratio)
+@
+
+Separate out what is needed for Panel a):
+<<sepPanelsA, include=TRUE>>=
+Vars <- VarsAll[VarsAll$corrBtw == 0.5,]
+
+##add in the 0 heterogeneity case
+Vars <- rbind(Vars, Vars0)
+
+RelEff.b <- 
+  rbind(cbind(as.matrix(Vars[,c("I", "p", "corrBtw", "varBtw", "RelEff","MVMAcomp"),]),"RelEff"),
+        cbind(as.matrix(Vars[,c("I", "p", "corrBtw", "varBtw", "RelEffT","MVMAcomp"),]),"RelEffT"),
+        cbind(as.matrix(Vars[,c("I", "p", "corrBtw", "varBtw", "RelEffB", "MVMAcomp"),]),"RelEffB"))
+colnames(RelEff.b)[ncol(RelEff.b)] <- "Estimate" 
+RelEff.b <- as.data.frame(RelEff.b)
+sapply(RelEff.b, class)
+
+RelEff.b$p <- as.numeric(as.character(RelEff.b$p))
+RelEff.b$corrBtw <- as.numeric(as.character(RelEff.b$corrBtw))
+RelEff.b$varBtw <- as.numeric(as.character(RelEff.b$varBtw))
+RelEff.b$RelEff <- as.numeric(as.character(RelEff.b$RelEff))
+RelEff.b$MVMAcomp <- as.numeric(as.character(RelEff.b$MVMAcomp))
+
+@
+
+<<Figure_S4_panel_a, fig.width=6, fig.height=5, dpi=800>>=
+panelA <- ggplot(RelEff.b, aes(x=p, y=RelEff))+
+  geom_point(size=3.0, aes(color=as.factor(varBtw), shape=as.factor(varBtw)))+
+  geom_line(aes(linetype=Estimate,color=as.factor(varBtw), shape=as.factor(varBtw)))+
+  themeUsed +
+  ylab(expression(RelEff)) +
+  ylim(limits=c(0.45, 1)) +
+  scale_color_discrete(name = "",
+                       labels = 
+                         c(expression(paste(sigma^2, "/", S^2, "=",
+                                            0)),
+                           expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
+                                            1/5)),
+                           expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
+                                            1)),
+                           expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
+                                            5)))) +
+  scale_shape_discrete(name = "",
+                       labels = 
+                         c(expression(paste(sigma^2, "/", S^2, "=",
+                                            0)),
+                           expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
+                                            1/5)),
+                           expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
+                                            1)),
+                           expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
+                                            5)))) +     
+  labs(color="", shape="",
+       title=expression(atop("(a)",paste("Random effects: ",
+                                        S[i]^2,  phantom() %~~% phantom() , 1, ", ",
+                                        rho[i], phantom() %~~% phantom(), (i-1)/I, ", ",
+                                        rho^BS, " = ", 0.5, ", ",
+                                        ##"\n",
+                                        I, " = ", 20)))) +
+  scale_linetype_manual(name = "",
+                        labels = 
+                          c(expression(paste(RelEff)),
+                            expression(paste(RelEff^B)),
+                            expression(paste(RelEff^T))),
+                        values=c(2,3,1))
+@
+
+Panel b):
+<<Figure_S4_panel_b, fig.width=6, fig.height=5, dpi=800>>=
+panelB <- ggplot(RelEff.b, aes(x=p, y=MVMAcomp))+
+  geom_point(size=3.0, aes(color=as.factor(varBtw), shape=as.factor(varBtw)))+
+  geom_line(aes(color=as.factor(varBtw), shape=as.factor(varBtw)))+
+  themeUsed+
+  ylab(expression(paste(Var, "(", mu[1]^M, ")", "/",
+                        Var, "(", mu[1]^MB, ")"))) +
+  ylim(min(RelEff.b$MVMAcomp)*0.8, 1.2) +
+  labs(color="", shape="",
+       title=expression(atop("(b)",paste("Random effects: ",
+                                         S[i]^2,  phantom() %~~% phantom() , 1, ", ",
+                                         rho[i], phantom() %~~% phantom(), (i-1)/I, ", ",
+                                         rho^BS, " = ", 0.5, ", ",
+                                         ##"\n",
+                                         I, " = ", 20)))) +
+  scale_color_discrete(name = "",
+                       labels = 
+                         c(expression(paste(sigma^2, "/", S^2, "=",
+                                            0)),
+                           expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
+                                            1/5)),
+                           expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
+                                            1)),
+                           expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
+                                            5)))) +
+  scale_shape_discrete(name = "",
+                       labels = 
+                         c(expression(paste(sigma^2, "/", S^2, "=",
+                                            0)),
+                           expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
+                                            1/5)),
+                           expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
+                                            1)),
+                           expression(paste(sigma^2, "/", S^2, phantom() %~~% phantom(),
+                                            5))))
+@
+
+\section{Panels c) and d)}
+
+Load the files representing the summary for each scenario and save the results in a single dataframe, \textttt{VarsAll}:
+<<combComb, include=TRUE>>=
+allFiles <- list.files("simResultsComb")
+##remove files that have "AR1_het" in the title
+allFiles <- allFiles[-grep("AR1_het", allFiles)]
+
+##save the three Vars for the different combinations
+VarsAll <- expand.grid(I = c(5, 10, 15, 20),
+                       p = 2:10,
+                       corrBtw = c(0, 0.5),
+                       varBtw = c(0, 1))
+
+##only keep combinations of corrBtw=0 & varBtw=0, corrBtw=0.5 & varBtw=0.5
+VarsAll <- VarsAll[(VarsAll$corrBtw == 0 & VarsAll$varBtw == 0) |
+                   (VarsAll$corrBtw == 0.5 & VarsAll$varBtw == 1) ,]
+
+VarsAll$known <- VarsAll$unknown <- VarsAll$univKnown <- VarsAll$univ <- 
+  VarsAll$Bayes <- VarsAll$univBayes <- NA
+
+for(file in 1:length(allFiles))
+{
+    load(paste("simResultsComb", 
+               allFiles[file], sep="/"))
+  
+    rowNr <- gsub("combine_cost_of_estimation_", "", allFiles[file])
+    rowNr <- gsub(".RData", "", rowNr)
+    rowNr <- as.numeric(rowNr)
+
+    ##only consider files which have the Bayesian results included
+    if(length(grep("Bayes", colnames(Vars)))>0)
+    {
+      VarsAll[rowNr, colnames(VarsAll)] <- Vars[rowNr, colnames(VarsAll)]
+    }
+}
+VarsAll$Ratio <- VarsAll$known/VarsAll$unknown
+VarsAll$RelEff <- VarsAll$unknown/VarsAll$univ
+VarsAll$RelEffT <- VarsAll$known/VarsAll$univKnown
+VarsAll$RelEffB <- VarsAll$Bayes/VarsAll$univBayes
+VarsAll$MVMAcomp <- VarsAll$unknown/VarsAll$Bayes
+range(VarsAll$Ratio)
+
+VarsAll$I <- as.factor(paste("I=", VarsAll$I, sep=""))
+VarsAll$I <- relevel(VarsAll$I, ref="I=5")
+@
+
+Get what is needed for panels c) and d):
+<<sepPanels, include=TRUE>>=
+Vars.b <- VarsAll[VarsAll$corrBtw == 0 &
+  VarsAll$varBtw == 0,]
+
+##for panel c, have RelEff, RelEffT, RelEffB
+##probably easier to just create another object
+RelEff.c <- 
+  rbind(cbind(as.matrix(Vars.b[,c("I", "p", "corrBtw", "varBtw", "RelEff", "MVMAcomp"),]),"RelEff"),
+        cbind(as.matrix(Vars.b[,c("I", "p", "corrBtw", "varBtw", "RelEffT", "MVMAcomp"),]),"RelEffT"),
+        cbind(as.matrix(Vars.b[,c("I", "p", "corrBtw", "varBtw", "RelEffB", "MVMAcomp"),]),"RelEffB"))
+colnames(RelEff.c)[ncol(RelEff.c)] <- "Estimate" 
+RelEff.c <- as.data.frame(RelEff.c)
+sapply(RelEff.c, class)
+
+RelEff.c$p <- as.numeric(as.character(RelEff.c$p))
+RelEff.c$corrBtw <- as.numeric(as.character(RelEff.c$corrBtw))
+RelEff.c$varBtw <- as.numeric(as.character(RelEff.c$varBtw))
+RelEff.c$RelEff <- as.numeric(as.character(RelEff.c$RelEff))
+RelEff.c$MVMAcomp <- as.numeric(as.character(RelEff.c$MVMAcomp))
+RelEff.c$I <- relevel(RelEff.c$I, ref="I=5")
+
+@
+
+\section{Create plots}
+
+Panel c):
+<<Figure_S4_panel_c, fig.width=6, fig.height=5, dpi=800>>=
+panelC <- ggplot(RelEff.c, aes(x=p, y=RelEff))+
+  geom_point(size=3.0, aes(color=I, shape=I))+
+  geom_line(aes(color=I, shape=I, linetype=Estimate))+
+  themeUsed+
+  ylab(expression(RelEff)) +
+  ylim(min(RelEff.c$RelEff)*0.6, 1) +
+  labs(color="", shape="", 
+       title=expression(atop("(c)", paste("Random effects: ",
+                                          S[i]^2,  phantom() %~~% phantom() , 1, ", ",
+                                          rho[i], phantom() %~~% phantom(), (i-1)/I, ", ",
+                                          ##"\n",
+                                          Sigma, " = ", 0)))) +
+  scale_linetype_manual(name = "",
+                        labels = 
+                          c(expression(paste(RelEff)),
+                            expression(paste(RelEff^B)),
+                            expression(paste(RelEff^T))),
+                        values=c(2,3,1))+
+  scale_color_manual(values=rev(gg_color_hue(4)), name="")+
+  scale_shape_manual(values=c(3,15,17,16),name="")
+@
+
+Panel d):
+<<Figure_S4_panel_d, fig.width=6, fig.height=5, dpi=800>>=
+panelD <- ggplot(RelEff.c, aes(x=p, y=MVMAcomp))+
+  geom_point(size=3.0, aes(color=I, shape=I))+
+  geom_line(aes(color=I, shape=I))+
+  themeUsed+
+  ylab(expression(paste(Var, "(", mu[1]^M, ")", "/",
+                        Var, "(", mu[1]^MB, ")"))) +
+  ylim(min(RelEff.c$MVMAcomp)*0.75, 1.2) +
+  labs(color="", shape="", 
+       title=expression(atop("(d)", paste("Random effects: ",
+                                          S[i]^2,  phantom() %~~% phantom() , 1, ", ",
+                                          rho[i], phantom() %~~% phantom(), (i-1)/I, ", ",
+                                          ##"\n",
+                                          Sigma, " = ", 0)))) +
+    scale_color_manual(values=rev(gg_color_hue(4)), name="")+
+    scale_shape_manual(values=c(3,15,17,16),name="")
+@
+
+
+
+<<Figure_S4_panels_abcd, fig.width=12, fig.height=12, dpi=800>>=
+multiplot(panelA, panelC, panelB, panelD, cols=2)
+@
+
+\end{document}
