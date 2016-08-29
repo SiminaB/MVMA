@@ -1,3 +1,3 @@
 Instructions:
 
-- Run make_FigureS2.Rnw to generate Figure S2
+- Run make_Figure_S2.Rnw to generate Figure S2

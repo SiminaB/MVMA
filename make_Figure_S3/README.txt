@@ -1,3 +1,3 @@
 Instructions:
 
-- Run make_FigureS3.Rnw to generate Figure S3
+- Run make_Figure_S3.Rnw to generate Figure S3
