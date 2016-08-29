@@ -1,6 +1,6 @@
 library(mvmeta)
 
-setwd("/data/bocasm/Research/Meta analysis/code/simulations/cost_of_estimation_post_SIM")
+setwd("/data/bocasm/Research/Meta analysis/code/simulations/cost_of_estimation")
 
 allFiles <- list.files("simResults")
 
@@ -171,7 +171,7 @@ save(list=c("MSEs", "Vars", "Sigma",
      "StudyEmpVars",
      "OverallEstSigmaUnknown", "OverallEstSigmaKnown",
      "OverallEstSigmaUniv"),
-     file=paste("simResultsComb/combine_cost_of_estimation_post_SIM",rowNr,".RData", sep=""))
+     file=paste("simResultsComb/combine_cost_of_estimation",rowNr,".RData", sep=""))
 
 rm(list=ls())
 

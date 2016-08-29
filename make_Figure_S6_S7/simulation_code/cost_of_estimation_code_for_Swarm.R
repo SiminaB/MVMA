@@ -5,7 +5,7 @@ library(Matrix)
 library(speedglm)
 library(clusterGeneration)
 
-setwd("/data/bocasm/Research/Meta\ analysis/code/simulations/cost_of_estimation_post_SIM")
+setwd("/data/bocasm/Research/Meta\ analysis/code/simulations/cost_of_estimation")
 
 tryCatch.W.E <- function(expr)
 {
@@ -233,7 +233,7 @@ StudyEstVars[[1]][[10]]
 
 save(list=c("StudyEst", "StudyEstVars", "SigmaEst", "SigmaEstUniv", "StudyWarns", "MetaWarns",
      "Sigma", "varCovsSitesAll"),
-     file = paste("simResults/cost_of_estimation_post_SIM",
+     file = paste("simResults/cost_of_estimation",
      "randVar", randVar, "p", p, "het", het,
      "batch", batch,
      "sampleType", sampleType,

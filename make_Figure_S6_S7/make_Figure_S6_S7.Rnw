@@ -56,7 +56,7 @@ for(file in 1:length(allFiles))
 {
     load(paste("simResultsComb", allFiles[file], sep="/"))
 
-    rowNr <- gsub("combine_cost_of_estimation_post_SIM", "", allFiles[file])
+    rowNr <- gsub("combine_cost_of_estimation", "", allFiles[file])
     rowNr <- gsub(".RData", "", rowNr)
     rowNr <- as.numeric(rowNr)
 
