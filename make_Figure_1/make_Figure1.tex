@@ -358,7 +358,7 @@ We save the relative efficiencies for only one of coefficients, as they are all 
   \hlkwd{labs}\hlstd{(}\hlkwc{title}\hlstd{=}
          \hlkwd{expression}\hlstd{(}\hlkwd{atop}\hlstd{(}\hlstr{"(c)"}\hlstd{,}
                          \hlkwd{paste}\hlstd{(}\hlstr{"Fixed effects: I = 20, "}\hlstd{,}
-                               \hlstd{S[}\hlkwd{list}\hlstd{(kk,i)],} \hlstr{" = "}\hlstd{,} \hlnum{1}\hlstd{,} \hlstr{", "}\hlstd{,}
+                               \hlstd{S[i]}\hlopt{^}\hlnum{2}\hlstd{,} \hlstr{" = "}\hlstd{,} \hlnum{1}\hlstd{,} \hlstr{", "}\hlstd{,}
                                \hlstd{rho[i],} \hlstr{" = "}\hlstd{,} \hlkwd{rho}\hlstd{(i}\hlopt{-}\hlnum{1}\hlstd{)}\hlopt{/}\hlstd{I))))}
 \end{alltt}
 \end{kframe}
@@ -435,7 +435,7 @@ We save the relative efficiencies for only one of coefficients, as they are all 
   \hlkwd{scale_color_manual}\hlstd{(}\hlkwc{values}\hlstd{=}\hlkwd{rev}\hlstd{(}\hlkwd{gg_color_hue}\hlstd{(}\hlnum{4}\hlstd{)),} \hlkwc{name}\hlstd{=}\hlstr{""}\hlstd{)}\hlopt{+}
   \hlkwd{scale_shape_manual}\hlstd{(}\hlkwc{values}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{3}\hlstd{,}\hlnum{15}\hlstd{,}\hlnum{17}\hlstd{,}\hlnum{16}\hlstd{),}\hlkwc{name}\hlstd{=}\hlstr{""}\hlstd{)}\hlopt{+}
   \hlkwd{labs}\hlstd{(}\hlkwc{title}\hlstd{=}\hlkwd{expression}\hlstd{(}\hlkwd{atop}\hlstd{(}\hlstr{"(d)"}\hlstd{,} \hlkwd{paste}\hlstd{(}\hlstr{"Fixed effects: "}\hlstd{,}
-                                          \hlstd{S[kk,i],} \hlstr{" = "}\hlstd{,} \hlnum{1}\hlstd{,} \hlstr{", "}\hlstd{,}
+                                          \hlstd{S[i]}\hlopt{^}\hlnum{2}\hlstd{,} \hlstr{" = "}\hlstd{,} \hlnum{1}\hlstd{,} \hlstr{", "}\hlstd{,}
                                           \hlstd{rho[i],} \hlstr{" = "}\hlstd{, (i}\hlopt{-}\hlnum{1}\hlstd{)}\hlopt{/}\hlstd{I))))}
 \end{alltt}
 

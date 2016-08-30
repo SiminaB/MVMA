@@ -282,7 +282,7 @@ panelC <- ggplot(bigMat,
   labs(title=
          expression(atop("(c)",
                          paste("Fixed effects: I = 20, ", 
-                               S[list(kk,i)], " = ", 1, ", ",
+                               S[i]^2, " = ", 1, ", ",
                                rho[i], " = ", rho(i-1)/I))))
 
 @
@@ -353,7 +353,7 @@ panelD <- ggplot(bigMat,
   scale_color_manual(values=rev(gg_color_hue(4)), name="")+
   scale_shape_manual(values=c(3,15,17,16),name="")+
   labs(title=expression(atop("(d)", paste("Fixed effects: ",
-                                          S[kk,i], " = ", 1, ", ",
+                                          S[i]^2, " = ", 1, ", ",
                                           rho[i], " = ", (i-1)/I))))
 
 @
