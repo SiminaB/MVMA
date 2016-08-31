@@ -107,7 +107,7 @@ panelA <- ggplot(bigMat.a,
   labs(title=
          expression(atop("(a)",
                          paste("Fixed effects: I = 2, p = 2, ", 
-                               r[1], " = ", r[2], " = ", 0.5))))
+                               r, " = ", 0.5))))
 @
 
 \section{Create datasets for panel b)}
@@ -195,7 +195,7 @@ panelB <- ggplot(bigMat.b,
          expression(atop("(b)",
                          paste("Fixed effects: I = 2, ", 
                                rho[1], " = ", 0, ", ",
-                                r[1], " = ", r[2], " = ", 0.5))))
+                               r, " = ", 0.5))))
 
 @
 
