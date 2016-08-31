@@ -220,7 +220,7 @@ panelB <- ggplot(bigMat,
   labs(title=
          expression(atop("(b): AR(1)",
                          paste("Fixed effects: I = 20, ", 
-                               S[list(kk,i)], " = ", 1, ", ",
+                               S[i]^2, " = ", 1, ", ",
                                rho[i], " = ", rho(i-1)/I))))
 
 @
@@ -404,7 +404,7 @@ panelD <- ggplot(bigMat,
   labs(title=
          expression(atop("(d): Block diagonal (block size=5)",
                          paste("Fixed effects: I = 20, ", 
-                               S[list(kk,i)], " = ", 1, ", ",
+                               S[i]^2, " = ", 1, ", ",
                                rho[i], " = ", rho(i-1)/I))))
 
 @
