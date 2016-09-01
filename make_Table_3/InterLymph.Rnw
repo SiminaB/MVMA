@@ -1,0 +1,171 @@
+\documentclass{article}
+\usepackage{alltt}
+\usepackage{amsmath}
+\usepackage[sc]{mathpazo}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{verbose,tmargin=2.5cm,bmargin=2.5cm,lmargin=2.5cm,rmargin=2.5cm}
+\setcounter{secnumdepth}{2}
+\setcounter{tocdepth}{2}
+\usepackage{url}
+\usepackage[unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=true,bookmarksopen=true,bookmarksopenlevel=2,
+ breaklinks=false,pdfborder={0 0 1},backref=false,colorlinks=false]
+ {hyperref}
+\hypersetup{
+ pdfstartview={XYZ null null 1}}
+ 
+\title{InterLymph meta-analysis} 
+ 
+\usepackage{breakurl}
+\begin{document}
+%\SweaveOpts{concordance=TRUE}
+\maketitle
+
+<<setup, include=FALSE, cache=FALSE>>=
+# this is equivalent to \SweaveOpts{...}
+opts_chunk$set(fig.path='figures/', fig.align='center', fig.show='hold')
+options(replace.assign=TRUE,width=60)
+@
+
+Load libraries:
+<<>>=
+library(mvmeta)
+library(xtable)
+@
+
+\section{Load study-level results}
+
+Load the effect sizes and covariance matrices from the RData file:
+<<>>=
+load("InterLymph_summary_stats.RData")
+
+##names of variables
+Var1 <- "Wine"
+Var2 <- "Liquor"
+Var3 <- "Beer"
+Var4 <- "Smoking"
+@
+
+\section{Fixed effects meta-analyses}
+
+We fit the MVMA and UVMA fixed effects models:
+<<FEmeta, include=TRUE>>=
+##MVMA
+MVMA.FE <- coef(summary(mvmeta(EffSizes, S = CovMats,
+                               method="fixed")))
+MVMA.FE[, -c(2,4)] <- round(MVMA.FE[, -c(2,4)], 2)
+MVMA.FE[, 4] <- round(MVMA.FE[, 4], 2) 
+
+##UVMA can be done by assuming the within-study correlations are 0:
+CovMatsInd <- lapply(CovMats, function(x) {diag(diag(x))})
+UVMA.FE <- coef(summary(mvmeta(EffSizes, S = CovMatsInd,
+                               method="fixed")))
+UVMA.FE[, -c(2,4)] <- round(UVMA.FE[, -c(2,4)], 2)
+UVMA.FE[, 4] <- round(UVMA.FE[, 4], 2) 
+
+@
+
+Save all the results in a table:
+<<resFEtab, include=TRUE>>=
+resFEtab <- data.frame(Variable = rep(c(Var1, Var2, Var3, Var4), times=2),
+                       Method = rep(c("MVMA", "UVMA"), each=4),
+                       Estimate = c(MVMA.FE[,"Estimate"], UVMA.FE[,"Estimate"]),
+                       Pvalue = c(MVMA.FE[,"Pr(>|z|)"], UVMA.FE[,"Pr(>|z|)"]),
+                       CI = c(paste("(", MVMA.FE[, "95%ci.lb"], ", ", MVMA.FE[, "95%ci.ub"], ")", sep=""),
+                              paste("(", UVMA.FE[, "95%ci.lb"], ", ", UVMA.FE[, "95%ci.ub"], ")", sep="")))                       
+
+resFEtab$Pvalue <- as.character(resFEtab$Pvalue)
+resFEtab$Pvalue[resFEtab$Pvalue == "0"] <- "<0.001"
+@
+
+Here is the table in a form that can be copied/pasted into a LaTeX document from the .tex file:
+<<resFEtabTeX, echo=FALSE, results='asis', include=TRUE>>=
+xtable(resFEtab, digits=c(1,0,0,4,0,0))
+@
+
+\section{Random effects meta-analyses}
+
+We fit the MVMA and UVMA random effects models (using REML):
+<<REmeta, include=TRUE>>=
+##MVMA
+MVMA.RE <- coef(summary(mvmeta(EffSizes, S = CovMats,
+                               method="reml")))
+MVMA.RE[, -c(2,4)] <- round(MVMA.RE[, -c(2,4)], 2)
+MVMA.RE[, 4] <- round(MVMA.RE[, 4], 2)
+
+##UVMAs have to be fit separately for RE case
+UVMA.RE1 <- mvmeta(EffSizes[,1,drop=FALSE], 
+                   S = sapply(CovMats, function(x){x[1,1,drop=FALSE]}),
+                   method="reml")
+UVMA.RE2 <- mvmeta(EffSizes[,2,drop=FALSE], 
+                   S = sapply(CovMats, function(x){x[2,2,drop=FALSE]}),
+                   method="reml")
+UVMA.RE3 <- mvmeta(EffSizes[,3,drop=FALSE], 
+                   S = sapply(CovMats, function(x){x[3,3,drop=FALSE]}),
+                   method="reml")
+UVMA.RE4 <- mvmeta(EffSizes[,4,drop=FALSE], 
+                   S = sapply(CovMats, function(x){x[4,4,drop=FALSE]}),
+                   method="reml")
+UVMA.RE <- rbind(coef(summary(UVMA.RE1)), coef(summary(UVMA.RE2)), 
+                 coef(summary(UVMA.RE3)), coef(summary(UVMA.RE4)))
+
+UVMA.RE[, -c(2,4)] <- round(UVMA.RE[, -c(2,4)], 2)
+UVMA.RE[, 4] <- round(UVMA.RE[, 4], 2)
+
+@
+
+Save all the results in a table:
+<<resREtab, include=TRUE>>=
+resREtab <- data.frame(Variable = rep(c(Var1, Var2, Var3, Var4), times=2),
+                       Method = rep(c("MVMA", "UVMA"), each=4),
+                       Estimate = c(MVMA.RE[,"Estimate"], UVMA.RE[,"Estimate"]),
+                       Pvalue = c(MVMA.RE[,"Pr(>|z|)"], UVMA.RE[,"Pr(>|z|)"]),
+                       CI = c(paste("(", MVMA.RE[, "95%ci.lb"], ", ", MVMA.RE[, "95%ci.ub"], ")", sep=""),
+                              paste("(", UVMA.RE[, "95%ci.lb"], ", ", UVMA.RE[, "95%ci.ub"], ")", sep="")))                       
+
+resREtab$Pvalue <- as.character(resREtab$Pvalue)
+resREtab$Pvalue[resREtab$Pvalue == "0"] <- "<0.001"
+@
+
+Here is the table in a form that can be copied/pasted into a LaTeX document from the .tex file:
+<<resREtabTeX, echo=FALSE, results='asis', include=TRUE>>=
+xtable(resREtab, digits=c(1,0,0,4,0,0))
+@
+
+\section{Make table combining results from fixed- and random-effects}
+
+Make combined table for manuscript:
+<<resTab, include=TRUE>>=
+##put point estimates and CIs in the same cell
+resFEtab$EstCI <- paste(resFEtab$Estimate, resFEtab$CI, sep=" ")
+resREtab$EstCI <- paste(resREtab$Estimate, resREtab$CI, sep=" ")
+
+resTab <- data.frame(Variable = resFEtab$Variable[1:4],
+                     FE.MVMA = resFEtab$EstCI[resFEtab$Method == "MVMA"], 
+                     FE.UVMA = resFEtab$EstCI[resFEtab$Method == "UVMA"],
+                     RE.MVMA = resREtab$EstCI[resREtab$Method == "MVMA"], 
+                     RE.UVMA = resREtab$EstCI[resREtab$Method == "UVMA"])
+
+colnames(resTab) <- c("FE: MVMA", "FE: UVMA", "RE: MVMA", "RE: UVMA")
+@
+
+Here is the table in a form that can be copied/pasted into a LaTeX document from the .tex file:
+<<resTabTeX, echo=FALSE, results='asis', include=TRUE>>=
+print(xtable(resTab), include.rownames=FALSE)
+@
+
+
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+

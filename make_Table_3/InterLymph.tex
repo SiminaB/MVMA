@@ -1,0 +1,294 @@
+\documentclass{article}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\usepackage{alltt}
+\usepackage{amsmath}
+\usepackage[sc]{mathpazo}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{verbose,tmargin=2.5cm,bmargin=2.5cm,lmargin=2.5cm,rmargin=2.5cm}
+\setcounter{secnumdepth}{2}
+\setcounter{tocdepth}{2}
+\usepackage{url}
+\usepackage[unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=true,bookmarksopen=true,bookmarksopenlevel=2,
+ breaklinks=false,pdfborder={0 0 1},backref=false,colorlinks=false]
+ {hyperref}
+\hypersetup{
+ pdfstartview={XYZ null null 1}}
+ 
+\title{InterLymph meta-analysis} 
+ 
+\usepackage{breakurl}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\begin{document}
+%\SweaveOpts{concordance=TRUE}
+\maketitle
+
+
+
+Load libraries:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(mvmeta)}
+\end{alltt}
+
+
+{\ttfamily\noindent\itshape\color{messagecolor}{\#\# This is mvmeta 0.4.7. For an overview type: help('mvmeta-package').}}\begin{alltt}
+\hlkwd{library}\hlstd{(xtable)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\section{Load study-level results}
+
+Load the effect sizes and covariance matrices from the RData file:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{load}\hlstd{(}\hlstr{"InterLymph_summary_stats.RData"}\hlstd{)}
+
+\hlcom{##names of variables}
+\hlstd{Var1} \hlkwb{<-} \hlstr{"Wine"}
+\hlstd{Var2} \hlkwb{<-} \hlstr{"Liquor"}
+\hlstd{Var3} \hlkwb{<-} \hlstr{"Beer"}
+\hlstd{Var4} \hlkwb{<-} \hlstr{"Smoking"}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\section{Fixed effects meta-analyses}
+
+We fit the MVMA and UVMA fixed effects models:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{##MVMA}
+\hlstd{MVMA.FE} \hlkwb{<-} \hlkwd{coef}\hlstd{(}\hlkwd{summary}\hlstd{(}\hlkwd{mvmeta}\hlstd{(EffSizes,} \hlkwc{S} \hlstd{= CovMats,}
+                               \hlkwc{method}\hlstd{=}\hlstr{"fixed"}\hlstd{)))}
+\hlstd{MVMA.FE[,} \hlopt{-}\hlkwd{c}\hlstd{(}\hlnum{2}\hlstd{,}\hlnum{4}\hlstd{)]} \hlkwb{<-} \hlkwd{round}\hlstd{(MVMA.FE[,} \hlopt{-}\hlkwd{c}\hlstd{(}\hlnum{2}\hlstd{,}\hlnum{4}\hlstd{)],} \hlnum{2}\hlstd{)}
+\hlstd{MVMA.FE[,} \hlnum{4}\hlstd{]} \hlkwb{<-} \hlkwd{round}\hlstd{(MVMA.FE[,} \hlnum{4}\hlstd{],} \hlnum{2}\hlstd{)}
+
+\hlcom{##UVMA can be done by assuming the within-study correlations are 0:}
+\hlstd{CovMatsInd} \hlkwb{<-} \hlkwd{lapply}\hlstd{(CovMats,} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{) \{}\hlkwd{diag}\hlstd{(}\hlkwd{diag}\hlstd{(x))\})}
+\hlstd{UVMA.FE} \hlkwb{<-} \hlkwd{coef}\hlstd{(}\hlkwd{summary}\hlstd{(}\hlkwd{mvmeta}\hlstd{(EffSizes,} \hlkwc{S} \hlstd{= CovMatsInd,}
+                               \hlkwc{method}\hlstd{=}\hlstr{"fixed"}\hlstd{)))}
+\hlstd{UVMA.FE[,} \hlopt{-}\hlkwd{c}\hlstd{(}\hlnum{2}\hlstd{,}\hlnum{4}\hlstd{)]} \hlkwb{<-} \hlkwd{round}\hlstd{(UVMA.FE[,} \hlopt{-}\hlkwd{c}\hlstd{(}\hlnum{2}\hlstd{,}\hlnum{4}\hlstd{)],} \hlnum{2}\hlstd{)}
+\hlstd{UVMA.FE[,} \hlnum{4}\hlstd{]} \hlkwb{<-} \hlkwd{round}\hlstd{(UVMA.FE[,} \hlnum{4}\hlstd{],} \hlnum{2}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+Save all the results in a table:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{resFEtab} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlkwc{Variable} \hlstd{=} \hlkwd{rep}\hlstd{(}\hlkwd{c}\hlstd{(Var1, Var2, Var3, Var4),} \hlkwc{times}\hlstd{=}\hlnum{2}\hlstd{),}
+                       \hlkwc{Method} \hlstd{=} \hlkwd{rep}\hlstd{(}\hlkwd{c}\hlstd{(}\hlstr{"MVMA"}\hlstd{,} \hlstr{"UVMA"}\hlstd{),} \hlkwc{each}\hlstd{=}\hlnum{4}\hlstd{),}
+                       \hlkwc{Estimate} \hlstd{=} \hlkwd{c}\hlstd{(MVMA.FE[,}\hlstr{"Estimate"}\hlstd{], UVMA.FE[,}\hlstr{"Estimate"}\hlstd{]),}
+                       \hlkwc{Pvalue} \hlstd{=} \hlkwd{c}\hlstd{(MVMA.FE[,}\hlstr{"Pr(>|z|)"}\hlstd{], UVMA.FE[,}\hlstr{"Pr(>|z|)"}\hlstd{]),}
+                       \hlkwc{CI} \hlstd{=} \hlkwd{c}\hlstd{(}\hlkwd{paste}\hlstd{(}\hlstr{"("}\hlstd{, MVMA.FE[,} \hlstr{"95%ci.lb"}\hlstd{],} \hlstr{", "}\hlstd{, MVMA.FE[,} \hlstr{"95%ci.ub"}\hlstd{],} \hlstr{")"}\hlstd{,} \hlkwc{sep}\hlstd{=}\hlstr{""}\hlstd{),}
+                              \hlkwd{paste}\hlstd{(}\hlstr{"("}\hlstd{, UVMA.FE[,} \hlstr{"95%ci.lb"}\hlstd{],} \hlstr{", "}\hlstd{, UVMA.FE[,} \hlstr{"95%ci.ub"}\hlstd{],} \hlstr{")"}\hlstd{,} \hlkwc{sep}\hlstd{=}\hlstr{""}\hlstd{)))}
+
+\hlstd{resFEtab}\hlopt{$}\hlstd{Pvalue} \hlkwb{<-} \hlkwd{as.character}\hlstd{(resFEtab}\hlopt{$}\hlstd{Pvalue)}
+\hlstd{resFEtab}\hlopt{$}\hlstd{Pvalue[resFEtab}\hlopt{$}\hlstd{Pvalue} \hlopt{==} \hlstr{"0"}\hlstd{]} \hlkwb{<-} \hlstr{"<0.001"}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+Here is the table in a form that can be copied/pasted into a LaTeX document from the .tex file:
+% latex table generated in R 3.3.1 by xtable 1.8-2 package
+% Wed Aug 31 22:23:51 2016
+\begin{table}[ht]
+\centering
+\begin{tabular}{rllrll}
+  \hline
+ & Variable & Method & Estimate & Pvalue & CI \\ 
+  \hline
+1 & Wine & MVMA & -0.3300 & 0.06 & (-0.67, 0.01) \\ 
+  2 & Liquor & MVMA & -0.3100 & 0.55 & (-1.31, 0.69) \\ 
+  3 & Beer & MVMA & -0.8200 & $<$0.001 & (-1.38, -0.27) \\ 
+  4 & Smoking & MVMA & 0.3200 & $<$0.001 & (0.17, 0.46) \\ 
+  5 & Wine & UVMA & -0.4900 & 0.01 & (-0.86, -0.12) \\ 
+  6 & Liquor & UVMA & -0.1800 & 0.75 & (-1.26, 0.9) \\ 
+  7 & Beer & UVMA & -0.9600 & $<$0.001 & (-1.53, -0.4) \\ 
+  8 & Smoking & UVMA & 0.3200 & $<$0.001 & (0.18, 0.47) \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+
+\section{Random effects meta-analyses}
+
+We fit the MVMA and UVMA random effects models (using REML):
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{##MVMA}
+\hlstd{MVMA.RE} \hlkwb{<-} \hlkwd{coef}\hlstd{(}\hlkwd{summary}\hlstd{(}\hlkwd{mvmeta}\hlstd{(EffSizes,} \hlkwc{S} \hlstd{= CovMats,}
+                               \hlkwc{method}\hlstd{=}\hlstr{"reml"}\hlstd{)))}
+\hlstd{MVMA.RE[,} \hlopt{-}\hlkwd{c}\hlstd{(}\hlnum{2}\hlstd{,}\hlnum{4}\hlstd{)]} \hlkwb{<-} \hlkwd{round}\hlstd{(MVMA.RE[,} \hlopt{-}\hlkwd{c}\hlstd{(}\hlnum{2}\hlstd{,}\hlnum{4}\hlstd{)],} \hlnum{2}\hlstd{)}
+\hlstd{MVMA.RE[,} \hlnum{4}\hlstd{]} \hlkwb{<-} \hlkwd{round}\hlstd{(MVMA.RE[,} \hlnum{4}\hlstd{],} \hlnum{2}\hlstd{)}
+
+\hlcom{##UVMAs have to be fit separately for RE case}
+\hlstd{UVMA.RE1} \hlkwb{<-} \hlkwd{mvmeta}\hlstd{(EffSizes[,}\hlnum{1}\hlstd{,}\hlkwc{drop}\hlstd{=}\hlnum{FALSE}\hlstd{],}
+                   \hlkwc{S} \hlstd{=} \hlkwd{sapply}\hlstd{(CovMats,} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{)\{x[}\hlnum{1}\hlstd{,}\hlnum{1}\hlstd{,}\hlkwc{drop}\hlstd{=}\hlnum{FALSE}\hlstd{]\}),}
+                   \hlkwc{method}\hlstd{=}\hlstr{"reml"}\hlstd{)}
+\hlstd{UVMA.RE2} \hlkwb{<-} \hlkwd{mvmeta}\hlstd{(EffSizes[,}\hlnum{2}\hlstd{,}\hlkwc{drop}\hlstd{=}\hlnum{FALSE}\hlstd{],}
+                   \hlkwc{S} \hlstd{=} \hlkwd{sapply}\hlstd{(CovMats,} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{)\{x[}\hlnum{2}\hlstd{,}\hlnum{2}\hlstd{,}\hlkwc{drop}\hlstd{=}\hlnum{FALSE}\hlstd{]\}),}
+                   \hlkwc{method}\hlstd{=}\hlstr{"reml"}\hlstd{)}
+\hlstd{UVMA.RE3} \hlkwb{<-} \hlkwd{mvmeta}\hlstd{(EffSizes[,}\hlnum{3}\hlstd{,}\hlkwc{drop}\hlstd{=}\hlnum{FALSE}\hlstd{],}
+                   \hlkwc{S} \hlstd{=} \hlkwd{sapply}\hlstd{(CovMats,} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{)\{x[}\hlnum{3}\hlstd{,}\hlnum{3}\hlstd{,}\hlkwc{drop}\hlstd{=}\hlnum{FALSE}\hlstd{]\}),}
+                   \hlkwc{method}\hlstd{=}\hlstr{"reml"}\hlstd{)}
+\hlstd{UVMA.RE4} \hlkwb{<-} \hlkwd{mvmeta}\hlstd{(EffSizes[,}\hlnum{4}\hlstd{,}\hlkwc{drop}\hlstd{=}\hlnum{FALSE}\hlstd{],}
+                   \hlkwc{S} \hlstd{=} \hlkwd{sapply}\hlstd{(CovMats,} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{)\{x[}\hlnum{4}\hlstd{,}\hlnum{4}\hlstd{,}\hlkwc{drop}\hlstd{=}\hlnum{FALSE}\hlstd{]\}),}
+                   \hlkwc{method}\hlstd{=}\hlstr{"reml"}\hlstd{)}
+\hlstd{UVMA.RE} \hlkwb{<-} \hlkwd{rbind}\hlstd{(}\hlkwd{coef}\hlstd{(}\hlkwd{summary}\hlstd{(UVMA.RE1)),} \hlkwd{coef}\hlstd{(}\hlkwd{summary}\hlstd{(UVMA.RE2)),}
+                 \hlkwd{coef}\hlstd{(}\hlkwd{summary}\hlstd{(UVMA.RE3)),} \hlkwd{coef}\hlstd{(}\hlkwd{summary}\hlstd{(UVMA.RE4)))}
+
+\hlstd{UVMA.RE[,} \hlopt{-}\hlkwd{c}\hlstd{(}\hlnum{2}\hlstd{,}\hlnum{4}\hlstd{)]} \hlkwb{<-} \hlkwd{round}\hlstd{(UVMA.RE[,} \hlopt{-}\hlkwd{c}\hlstd{(}\hlnum{2}\hlstd{,}\hlnum{4}\hlstd{)],} \hlnum{2}\hlstd{)}
+\hlstd{UVMA.RE[,} \hlnum{4}\hlstd{]} \hlkwb{<-} \hlkwd{round}\hlstd{(UVMA.RE[,} \hlnum{4}\hlstd{],} \hlnum{2}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+Save all the results in a table:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{resREtab} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlkwc{Variable} \hlstd{=} \hlkwd{rep}\hlstd{(}\hlkwd{c}\hlstd{(Var1, Var2, Var3, Var4),} \hlkwc{times}\hlstd{=}\hlnum{2}\hlstd{),}
+                       \hlkwc{Method} \hlstd{=} \hlkwd{rep}\hlstd{(}\hlkwd{c}\hlstd{(}\hlstr{"MVMA"}\hlstd{,} \hlstr{"UVMA"}\hlstd{),} \hlkwc{each}\hlstd{=}\hlnum{4}\hlstd{),}
+                       \hlkwc{Estimate} \hlstd{=} \hlkwd{c}\hlstd{(MVMA.RE[,}\hlstr{"Estimate"}\hlstd{], UVMA.RE[,}\hlstr{"Estimate"}\hlstd{]),}
+                       \hlkwc{Pvalue} \hlstd{=} \hlkwd{c}\hlstd{(MVMA.RE[,}\hlstr{"Pr(>|z|)"}\hlstd{], UVMA.RE[,}\hlstr{"Pr(>|z|)"}\hlstd{]),}
+                       \hlkwc{CI} \hlstd{=} \hlkwd{c}\hlstd{(}\hlkwd{paste}\hlstd{(}\hlstr{"("}\hlstd{, MVMA.RE[,} \hlstr{"95%ci.lb"}\hlstd{],} \hlstr{", "}\hlstd{, MVMA.RE[,} \hlstr{"95%ci.ub"}\hlstd{],} \hlstr{")"}\hlstd{,} \hlkwc{sep}\hlstd{=}\hlstr{""}\hlstd{),}
+                              \hlkwd{paste}\hlstd{(}\hlstr{"("}\hlstd{, UVMA.RE[,} \hlstr{"95%ci.lb"}\hlstd{],} \hlstr{", "}\hlstd{, UVMA.RE[,} \hlstr{"95%ci.ub"}\hlstd{],} \hlstr{")"}\hlstd{,} \hlkwc{sep}\hlstd{=}\hlstr{""}\hlstd{)))}
+
+\hlstd{resREtab}\hlopt{$}\hlstd{Pvalue} \hlkwb{<-} \hlkwd{as.character}\hlstd{(resREtab}\hlopt{$}\hlstd{Pvalue)}
+\hlstd{resREtab}\hlopt{$}\hlstd{Pvalue[resREtab}\hlopt{$}\hlstd{Pvalue} \hlopt{==} \hlstr{"0"}\hlstd{]} \hlkwb{<-} \hlstr{"<0.001"}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+Here is the table in a form that can be copied/pasted into a LaTeX document from the .tex file:
+% latex table generated in R 3.3.1 by xtable 1.8-2 package
+% Wed Aug 31 22:23:52 2016
+\begin{table}[ht]
+\centering
+\begin{tabular}{rllrll}
+  \hline
+ & Variable & Method & Estimate & Pvalue & CI \\ 
+  \hline
+1 & Wine & MVMA & -0.5900 & 0.01 & (-1.01, -0.18) \\ 
+  2 & Liquor & MVMA & 0.0600 & 0.94 & (-1.56, 1.68) \\ 
+  3 & Beer & MVMA & -0.7500 & 0.05 & (-1.48, -0.01) \\ 
+  4 & Smoking & MVMA & 0.2600 & 0.01 & (0.06, 0.47) \\ 
+  5 & Wine & UVMA & -0.4900 & 0.01 & (-0.86, -0.12) \\ 
+  6 & Liquor & UVMA & 0.2600 & 0.76 & (-1.39, 1.92) \\ 
+  7 & Beer & UVMA & -0.9200 & 0.03 & (-1.75, -0.09) \\ 
+  8 & Smoking & UVMA & 0.2600 & 0.01 & (0.06, 0.46) \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+
+\section{Make table combining results from fixed- and random-effects}
+
+Make combined table for manuscript:
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{##put point estimates and CIs in the same cell}
+\hlstd{resFEtab}\hlopt{$}\hlstd{EstCI} \hlkwb{<-} \hlkwd{paste}\hlstd{(resFEtab}\hlopt{$}\hlstd{Estimate, resFEtab}\hlopt{$}\hlstd{CI,} \hlkwc{sep}\hlstd{=}\hlstr{" "}\hlstd{)}
+\hlstd{resREtab}\hlopt{$}\hlstd{EstCI} \hlkwb{<-} \hlkwd{paste}\hlstd{(resREtab}\hlopt{$}\hlstd{Estimate, resREtab}\hlopt{$}\hlstd{CI,} \hlkwc{sep}\hlstd{=}\hlstr{" "}\hlstd{)}
+
+\hlstd{resTab} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(}\hlkwc{Variable} \hlstd{= resFEtab}\hlopt{$}\hlstd{Variable[}\hlnum{1}\hlopt{:}\hlnum{4}\hlstd{],}
+                     \hlkwc{FE.MVMA} \hlstd{= resFEtab}\hlopt{$}\hlstd{EstCI[resFEtab}\hlopt{$}\hlstd{Method} \hlopt{==} \hlstr{"MVMA"}\hlstd{],}
+                     \hlkwc{FE.UVMA} \hlstd{= resFEtab}\hlopt{$}\hlstd{EstCI[resFEtab}\hlopt{$}\hlstd{Method} \hlopt{==} \hlstr{"UVMA"}\hlstd{],}
+                     \hlkwc{RE.MVMA} \hlstd{= resREtab}\hlopt{$}\hlstd{EstCI[resREtab}\hlopt{$}\hlstd{Method} \hlopt{==} \hlstr{"MVMA"}\hlstd{],}
+                     \hlkwc{RE.UVMA} \hlstd{= resREtab}\hlopt{$}\hlstd{EstCI[resREtab}\hlopt{$}\hlstd{Method} \hlopt{==} \hlstr{"UVMA"}\hlstd{])}
+
+\hlkwd{colnames}\hlstd{(resTab)} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"FE: MVMA"}\hlstd{,} \hlstr{"FE: UVMA"}\hlstd{,} \hlstr{"RE: MVMA"}\hlstd{,} \hlstr{"RE: UVMA"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+Here is the table in a form that can be copied/pasted into a LaTeX document from the .tex file:
+% latex table generated in R 3.3.1 by xtable 1.8-2 package
+% Wed Aug 31 22:23:53 2016
+\begin{table}[ht]
+\centering
+\begin{tabular}{lllll}
+  \hline
+FE: MVMA & FE: UVMA & RE: MVMA & RE: UVMA & NA \\ 
+  \hline
+Wine & -0.33 (-0.67, 0.01) & -0.49 (-0.86, -0.12) & -0.59 (-1.01, -0.18) & -0.49 (-0.86, -0.12) \\ 
+  Liquor & -0.31 (-1.31, 0.69) & -0.18 (-1.26, 0.9) & 0.06 (-1.56, 1.68) & 0.26 (-1.39, 1.92) \\ 
+  Beer & -0.82 (-1.38, -0.27) & -0.96 (-1.53, -0.4) & -0.75 (-1.48, -0.01) & -0.92 (-1.75, -0.09) \\ 
+  Smoking & 0.32 (0.17, 0.46) & 0.32 (0.18, 0.47) & 0.26 (0.06, 0.47) & 0.26 (0.06, 0.46) \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+
+
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
