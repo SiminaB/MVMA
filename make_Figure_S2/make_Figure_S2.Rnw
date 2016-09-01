@@ -60,7 +60,7 @@ identical(bigMat.a$RelEff1, bigMat.a$RelEff2)
 ##rename RelEff1 as RelEff
 names(bigMat.a)[names(bigMat.a) == "RelEff1"] <- "RelEff"
 ##make r into a factor (needed for ggplot)
-bigMat.a$r <- paste("r=", bigMat.a$r, sep="")##as.factor(bigMat.a$r)
+bigMat.a$r <- paste("r=", bigMat.a$r, sep="")
 @
 
 For Panel b), we take $r_1 = 0.5, \rho_{12,1}=0.5$:

@@ -20,7 +20,6 @@
 \usepackage{breakurl}
 \begin{document}
 \maketitle
-%\SweaveOpts{concordance=TRUE}
 
 <<setup, include=FALSE, cache=FALSE>>=
 # this is equivalent to \SweaveOpts{...}
@@ -62,7 +61,7 @@ identical(bigMat.a$RelEff1, bigMat.a$RelEff2)
 ##rename RelEff1 as RelEff
 names(bigMat.a)[names(bigMat.a) == "RelEff1"] <- "RelEff"
 ##make rho121 into a character(required for ggplot)
-bigMat.a$rho121 <- paste("rho121=", bigMat.a$rho121, sep="")##as.factor(bigMat.a$r)
+bigMat.a$rho121 <- paste("rho121=", bigMat.a$rho121, sep="")
 @
 
 \section{Create plot for panel a)}
@@ -145,7 +144,7 @@ for(i in 1:nrow(bigMat))
     bigMat$RelEff[i] <- varMVMA[1,1]/varUVMA[1,1]
 }
 
-##for Panel b), r = 0.5:
+##separate results for r = 0.5:
 bigMat.b <- bigMat[bigMat[,"r"]==0.5, ]
 ##transform back to data frame (for ggplot)
 bigMat.b <- as.data.frame(bigMat.b)

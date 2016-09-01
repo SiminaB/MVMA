@@ -20,10 +20,8 @@
 \usepackage{breakurl}
 \begin{document}
 \maketitle
-%\SweaveOpts{concordance=TRUE}
 
 <<setup, include=FALSE, cache=FALSE>>=
-# this is equivalent to \SweaveOpts{...}
 opts_chunk$set(fig.path='figures/', fig.align='center', fig.show='hold', echo=TRUE)
 options(replace.assign=TRUE,width=60)
 @
@@ -51,7 +49,6 @@ themeUsed <-  theme_bw(base_size = 20)+
         axis.line.y = element_line(color="black", size = 0.5)) 
 @
   
-
 \section{AR(1) correlation matrices}
 
 These results are for the $I=2, p\ge 2$ autoregressive case with AR(1) with equal within-study variances,
@@ -87,7 +84,7 @@ for(i in 1:nrow(bigMat))
     bigMat$RelEff[i] <- varMVMA[1,1]/varUVMA[1,1]
 }
 
-##for Panel b), r = 0.5:
+##r = 0.5:
 bigMat.b <- bigMat[bigMat[,"r"]==0.5, ]
 ##transform back to data frame (for ggplot)
 bigMat.b <- as.data.frame(bigMat.b)
@@ -158,15 +155,7 @@ for(n in 1:nrow(bigMat))
                                             rho=rho*(i-1)/I, 
                                             n=p) },
              rho, p, I)
-    ##get inverses of Si
-    ##use: http://mathoverflow.net/questions/65795/inverse-of-an-ar1-or-laplacian-or-kac-murdock-szeg%C3%B6-matrix
-    ##Si.inv <- lapply(i,
-    ##                 function(i, rho, p, I){
-    ##                   rho.i <- rho*(i-1)/I;
-    ##                   Sinv <- matrix(0, p, p);
-    ##                   Sinv
-    ##                 }
-    
+
     ##calculate the variances
     VarMVMA <- VarUVMA2 <-
       matrix(0, p, p)
@@ -271,7 +260,7 @@ for(i in 1:nrow(bigMat))
     bigMat$RelEff[i] <- varMVMA[1,1]/varUVMA[1,1]
 }
 
-##for Panel b), r = 0.5:
+##separate results for r = 0.5:
 bigMat.b <- bigMat[bigMat[,"r"]==0.5, ]
 ##transform back to data frame (for ggplot)
 bigMat.b <- as.data.frame(bigMat.b)

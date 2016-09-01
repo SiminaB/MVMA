@@ -22,7 +22,6 @@
 \maketitle
 
 <<setup, include=FALSE, cache=FALSE>>=
-# this is equivalent to \SweaveOpts{...}
 opts_chunk$set(fig.path='figures/', fig.align='center', fig.show='hold')
 options(replace.assign=TRUE,width=60)
 @
@@ -175,7 +174,6 @@ panelA <- ggplot(RelEff.b, aes(x=p, y=RelEff))+
                                         S[i]^2,  phantom() %~~% phantom() , 1, ", ",
                                         rho[i], phantom() %~~% phantom(), (i-1)/I, ", ",
                                         rho^BS, " = ", 0.5, ", ",
-                                        ##"\n",
                                         I, " = ", 20)))) +
   scale_linetype_manual(name = "",
                         labels = 
@@ -229,7 +227,7 @@ Separate out what is needed for Panel b):
 Vars.b <- VarsAll[VarsAll$corrBtw == 0 &
   VarsAll$varBtw == 0,]
 
-##for panel c, have both RelEff and RelEffT
+##have both RelEff and RelEffT
 ##probably easier to just create another object
 RelEff.d <- 
   rbind(cbind(as.matrix(Vars.b[,c("I", "p", "corrBtw", "varBtw", "RelEff"),]),"RelEff"),
